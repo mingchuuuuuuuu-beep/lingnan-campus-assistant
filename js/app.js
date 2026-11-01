@@ -3,7 +3,7 @@
  * Streamlined UI Application Controller with zh/en Language Switching
  */
 
-let currentLang = localStorage.getItem("lingnan_lang") || "zh";
+let currentLang = localStorage.getItem("lingnan_lang") || "en";
 
 const I18N = {
   zh: {
@@ -136,14 +136,14 @@ function setLanguage(lang) {
   // Toggle button active styling
   const btnZh = document.getElementById("lang-btn-zh");
   const btnEn = document.getElementById("lang-btn-en");
-  if (lang === "zh") {
-    btnZh.className = "lang-btn px-2.5 py-1 rounded-md font-bold transition bg-lnGold text-lnBlue shadow";
-    btnEn.className = "lang-btn px-2.5 py-1 rounded-md font-medium transition text-slate-300 hover:text-white";
-    document.documentElement.lang = "zh-HK";
-  } else {
-    btnEn.className = "lang-btn px-2.5 py-1 rounded-md font-bold transition bg-lnGold text-lnBlue shadow";
-    btnZh.className = "lang-btn px-2.5 py-1 rounded-md font-medium transition text-slate-300 hover:text-white";
+  if (lang === "en") {
+    btnEn.className = "lang-btn px-3 py-1 rounded-lg font-bold text-xs bg-lnGold text-lnBlue shadow transition";
+    btnZh.className = "lang-btn px-3 py-1 rounded-lg font-medium text-xs text-slate-300 hover:text-white transition";
     document.documentElement.lang = "en";
+  } else {
+    btnZh.className = "lang-btn px-3 py-1 rounded-lg font-bold text-xs bg-lnGold text-lnBlue shadow transition";
+    btnEn.className = "lang-btn px-3 py-1 rounded-lg font-medium text-xs text-slate-300 hover:text-white transition";
+    document.documentElement.lang = "zh-HK";
   }
 
   // Update all [data-i18n] text elements

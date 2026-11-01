@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="zh-HK">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lingnan Campus Assistant | 嶺南校園助手</title>
+  <title>Lingnan Campus Assistant | AI Agent (Gemini 3.1 Flash Lite)</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css?v=2.2">
   <script>
     tailwind.config = {
       theme: {
@@ -40,31 +40,36 @@
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Gemini 3.1 Flash Lite
             </span>
           </div>
-          <p class="text-xs text-slate-300" data-i18n="app_subtitle">嶺南大學校園 AI 助手 (CCC8015 專題展示)</p>
+          <p class="text-xs text-slate-300" data-i18n="app_subtitle">Lingnan University Campus AI Assistant (CCC8015 Project)</p>
         </div>
       </div>
 
-      <!-- Navigation & Language Switch -->
-      <div class="flex items-center gap-2.5 sm:gap-4 flex-wrap">
+      <!-- Navigation & Prominent Language Selector -->
+      <div class="flex items-center gap-3 sm:gap-4 flex-wrap">
+        <!-- Navigation Tabs -->
         <nav class="flex items-center gap-1.5 text-xs sm:text-sm" id="nav-tabs">
           <button class="tab-btn active px-3 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-chat">
             <i data-lucide="message-square" class="w-4 h-4 text-lnGold"></i>
-            <span data-i18n="nav_chat">智能對話</span>
+            <span data-i18n="nav_chat">Chatbot</span>
           </button>
           <button class="tab-btn px-3 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-kb">
             <i data-lucide="database" class="w-4 h-4 text-lnGold"></i>
-            <span data-i18n="nav_kb">官方知識庫</span>
+            <span data-i18n="nav_kb">Knowledge Base</span>
           </button>
           <button class="tab-btn px-3 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-workflow">
             <i data-lucide="git-branch" class="w-4 h-4 text-lnGold"></i>
-            <span data-i18n="nav_workflow">一頁運行原理</span>
+            <span data-i18n="nav_workflow">One-Page Architecture</span>
           </button>
         </nav>
 
-        <!-- Language Switcher (zh / en) -->
-        <div class="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-600 text-xs shadow-inner">
-          <button id="lang-btn-zh" class="lang-btn px-2.5 py-1 rounded-md font-bold transition bg-lnGold text-lnBlue shadow">中文</button>
-          <button id="lang-btn-en" class="lang-btn px-2.5 py-1 rounded-md font-medium transition text-slate-300 hover:text-white">EN</button>
+        <!-- Prominent Language Selector (Default: EN) -->
+        <div class="flex items-center bg-slate-900/90 px-1.5 py-1 rounded-xl border-2 border-lnGold shadow-lg">
+          <span class="text-xs text-yellow-300 font-bold px-1.5 flex items-center gap-1">
+            <i data-lucide="globe" class="w-3.5 h-3.5 text-lnGold"></i>
+            <span class="hidden sm:inline">Lang:</span>
+          </span>
+          <button id="lang-btn-en" class="lang-btn px-3 py-1 rounded-lg font-bold text-xs bg-lnGold text-lnBlue shadow transition">EN</button>
+          <button id="lang-btn-zh" class="lang-btn px-3 py-1 rounded-lg font-medium text-xs text-slate-300 hover:text-white transition">中文</button>
         </div>
       </div>
     </div>
@@ -80,12 +85,12 @@
         <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
           <span class="flex items-center gap-1">
             <i data-lucide="zap" class="w-3.5 h-3.5 text-lnGold"></i>
-            <span data-i18n="chips_title">常見問題快速點選 (Quick Questions)：</span>
+            <span data-i18n="chips_title">Quick Question Shortcuts:</span>
           </span>
-          <span class="text-[11px] text-emerald-600 font-mono" data-i18n="chips_badge">100% 真實大模型即時生成</span>
+          <span class="text-[11px] text-emerald-600 font-mono" data-i18n="chips_badge">Real-time Generative AI</span>
         </div>
         <div class="flex flex-wrap gap-2 text-xs" id="quick-chips">
-          <!-- Populated dynamically based on language -->
+          <!-- Populated dynamically based on language (default: en) -->
         </div>
       </div>
 
@@ -101,21 +106,21 @@
               <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
             </div>
             <div>
-              <div class="text-xs sm:text-sm font-bold text-slate-800" data-i18n="chat_box_title">嶺南校園助手 (Lingnan Campus Assistant)</div>
+              <div class="text-xs sm:text-sm font-bold text-slate-800" data-i18n="chat_box_title">Lingnan Campus Assistant</div>
               <div class="text-[11px] text-slate-500 flex items-center gap-1">
-                <span>Model: Google Gemini 3.1 Flash Lite</span> · <span class="text-emerald-600 font-medium" data-i18n="chat_quota_badge">免費額度 (Free Quota)</span>
+                <span>Model: Google Gemini 3.1 Flash Lite</span> · <span class="text-emerald-600 font-medium" data-i18n="chat_quota_badge">Free Quota</span>
               </div>
             </div>
           </div>
           <button id="clear-chat-btn" class="text-xs px-2.5 py-1 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-100 transition flex items-center gap-1">
             <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
-            <span data-i18n="btn_clear">重置</span>
+            <span data-i18n="btn_clear">Reset</span>
           </button>
         </div>
 
         <!-- Messages Stream Area -->
         <div id="messages-container" class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
-          <!-- Initial Welcome Message rendered by app.js based on language -->
+          <!-- Initial Welcome Message rendered in English by default -->
         </div>
 
         <!-- Chat Input Form -->
@@ -124,7 +129,7 @@
             <input 
               type="text" 
               id="user-input" 
-              placeholder="輸入你的校園生活或學術問題（例如：兆康站點行去嶺大？/ ILP 畢業要幾多 unit？）..." 
+              placeholder="Ask any campus or academic question (e.g. How to walk from Siu Hong? / How many ILP units?)..." 
               class="flex-1 px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-lnBlue focus:border-transparent transition"
               autocomplete="off"
             />
@@ -132,7 +137,7 @@
               type="submit" 
               class="px-5 py-2.5 bg-lnBlue hover:bg-lnBlueHover text-white rounded-xl text-sm font-medium shadow-sm transition flex items-center gap-1.5"
             >
-              <span data-i18n="btn_send">發送</span>
+              <span data-i18n="btn_send">Send</span>
               <i data-lucide="send" class="w-4 h-4"></i>
             </button>
           </form>
@@ -147,14 +152,14 @@
           <div>
             <h2 class="text-xl font-bold text-lnBlue flex items-center gap-2">
               <i data-lucide="database" class="w-6 h-6 text-lnGold"></i>
-              <span data-i18n="kb_title">嶺南大學官方知識庫清單 (Official Knowledge Base)</span>
+              <span data-i18n="kb_title">Official Lingnan Knowledge Base Sources</span>
             </h2>
             <p class="text-xs sm:text-sm text-slate-600 mt-1" data-i18n="kb_desc">
-              本助手的所有回答均以此 11 組已核實的官方頁面為事實依據（Ground Truth），杜絕 AI 幻覺。
+              All assistant answers are strictly grounded in these 11 verified official pages to eliminate AI hallucinations.
             </p>
           </div>
           <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full font-medium" data-i18n="kb_badge">
-            全數 11 組來源經官方核實 (HTTP 200)
+            All 11 sources officially verified (HTTP 200)
           </span>
         </div>
 
@@ -162,12 +167,12 @@
           <table class="w-full text-left text-xs border border-slate-200 rounded-xl overflow-hidden">
             <thead class="bg-slate-100 text-slate-700 uppercase font-semibold">
               <tr>
-                <th class="p-3" data-i18n="th_id">編號</th>
-                <th class="p-3" data-i18n="th_cat">類別</th>
-                <th class="p-3" data-i18n="th_title">官方頁面名稱 / 文件</th>
-                <th class="p-3" data-i18n="th_summary">規章摘要</th>
-                <th class="p-3 whitespace-nowrap" data-i18n="th_date">擷取日期</th>
-                <th class="p-3" data-i18n="th_status">狀態</th>
+                <th class="p-3" data-i18n="th_id">ID</th>
+                <th class="p-3" data-i18n="th_cat">Category</th>
+                <th class="p-3" data-i18n="th_title">Official Page / Document</th>
+                <th class="p-3" data-i18n="th_summary">Regulations Summary</th>
+                <th class="p-3 whitespace-nowrap" data-i18n="th_date">Retrieved Date</th>
+                <th class="p-3" data-i18n="th_status">Status</th>
               </tr>
             </thead>
             <tbody id="kb-table-body" class="divide-y divide-slate-200">
@@ -184,10 +189,10 @@
         <div>
           <h2 class="text-xl font-bold text-lnBlue flex items-center gap-2">
             <i data-lucide="git-branch" class="w-6 h-6 text-lnGold"></i>
-            <span data-i18n="wf_title">一頁運行原理：RAG 檢索增強生成架構</span>
+            <span data-i18n="wf_title">One-Page Architecture: RAG Workflow Pipeline</span>
           </h2>
           <p class="text-xs sm:text-sm text-slate-600 mt-1" data-i18n="wf_desc">
-            為什麼不用純 LLM？普通大模型會憑空捏造過時日期與規則。本系統採用 RAG (檢索增強生成)，確保每一次回答都經過官方來源核實。
+            Why not plain LLMs? General models hallucinate outdated dates and rules. Our system uses closed-book RAG to ensure every answer is grounded in official university documents.
           </p>
         </div>
 
@@ -198,10 +203,10 @@
 
         <!-- Key Features Overview -->
         <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
-          <div class="font-bold text-slate-900 text-sm" data-i18n="wf_specs_title">技術指標與專案承諾：</div>
-          <p data-i18n="wf_specs_1">• <b>零成本運作 ($0 Cost)</b>：採用 Google Gemini 免費配額 (Free Quota) 與 GitHub Pages 免費 CDN 靜態託管。</p>
-          <p data-i18n="wf_specs_2">• <b>嚴格防幻覺 (No Hallucination)</b>：知識庫無收錄的資訊誠實回覆不知，並引導至負責辦公室。</p>
-          <p data-i18n="wf_specs_3">• <b>免責聲明</b>：本系統為嶺南大學 CCC8015 生成式 AI 課堂專題展示，非官方職員，重要學業決定請以 Registry 及 OSA 為準。</p>
+          <div class="font-bold text-slate-900 text-sm" data-i18n="wf_specs_title">Technical Specs & Project Commitments:</div>
+          <p data-i18n="wf_specs_1">• <b>Zero-Cost Operation ($0 Cost)</b>: Powered by Google Gemini Free Quota and hosted on GitHub Pages free CDN.</p>
+          <p data-i18n="wf_specs_2">• <b>Strict Anti-Hallucination</b>: Questions missing from official records are honestly declined and redirected to designated offices.</p>
+          <p data-i18n="wf_specs_3">• <b>Disclaimer</b>: This is a CCC8015 student project prototype, not official university staff. Confirm important decisions with Registry/OSA.</p>
         </div>
       </div>
     </section>
@@ -211,14 +216,14 @@
   <!-- Footer -->
   <footer class="bg-slate-900 text-slate-400 py-5 border-t border-slate-800 text-xs">
     <div class="max-w-6xl mx-auto px-4 text-center space-y-1">
-      <p data-i18n="footer_title">嶺南大學 · CCC8015 生成式人工智能 (Generative AI) 專題研究展示網站</p>
-      <p class="text-slate-500" data-i18n="footer_sub">模型：Google Gemini 3.1 Flash Lite (Free Quota) · 託管於 GitHub Pages ($0 成本)</p>
+      <p data-i18n="footer_title">Lingnan University · CCC8015 Generative AI Project Showcase</p>
+      <p class="text-slate-500" data-i18n="footer_sub">Model: Google Gemini 3.1 Flash Lite (Free Quota) · Hosted on GitHub Pages ($0 Cost)</p>
     </div>
   </footer>
 
-  <!-- Scripts -->
-  <script src="js/data.js"></script>
-  <script src="js/bot-engine.js"></script>
-  <script src="js/app.js"></script>
+  <!-- Scripts with cache busting -->
+  <script src="js/data.js?v=2.2"></script>
+  <script src="js/bot-engine.js?v=2.2"></script>
+  <script src="js/app.js?v=2.2"></script>
 </body>
 </html>
