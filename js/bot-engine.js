@@ -108,11 +108,12 @@ class LingnanBotEngine {
 
   buildRAGSystemPrompt(lang) {
     const chunks = (window.LINGNAN_DATA && window.LINGNAN_DATA.semanticChunks) ? window.LINGNAN_DATA.semanticChunks : [];
+    const isEn = lang === "en";
     const kbContext = chunks.map(c => `
 [Category: ${c.category}]
-Summary: ${c.shortAnswer}
-Details: ${c.bullets.join(" ")}
-Official Source: ${c.source}
+Summary: ${isEn && c.shortAnswerEn ? c.shortAnswerEn : c.shortAnswer}
+Details: ${(isEn && c.bulletsEn ? c.bulletsEn : c.bullets).join(" ")}
+Official Source: ${isEn && c.sourceEn ? c.sourceEn : c.source}
 `).join("\n");
 
     if (lang === "en") {
@@ -157,34 +158,40 @@ ${kbContext}
   fallbackLocalGroundedAnswer(query, lang) {
     const chunks = (window.LINGNAN_DATA && window.LINGNAN_DATA.semanticChunks) ? window.LINGNAN_DATA.semanticChunks : [];
     const q = query.toLowerCase();
+    const isEn = lang === "en";
 
     for (const chunk of chunks) {
       for (const kw of chunk.keywords) {
-        if (q.includes(kw)) {
+        if (q.includes(kw.toLowerCase())) {
+          const shortAns = isEn && chunk.shortAnswerEn ? chunk.shortAnswerEn : chunk.shortAnswer;
+          const bullets = isEn && chunk.bulletsEn ? chunk.bulletsEn : chunk.bullets;
+          const source = isEn && chunk.sourceEn ? chunk.sourceEn : chunk.source;
+          const nextStep = isEn && chunk.nextStepEn ? chunk.nextStepEn : chunk.nextStep;
+
           return {
             type: "local_rag_fallback",
-            model: lang === "en" ? "Local Knowledge Base (Offline Backup)" : "本地規章知識庫 (離線備援)",
-            content: `${chunk.shortAnswer}\n\n${chunk.bullets.map(b => "• " + b).join("\n")}\n\n${lang === "en" ? "Source" : "來源"}：${chunk.source}\n${lang === "en" ? "Next step" : "下一步"}：${chunk.nextStep}`,
-            source: chunk.source
+            model: isEn ? "Official Knowledge Base (Grounded RAG)" : "嶺南官方規章知識庫 (核實檢索)",
+            content: `${shortAns}\n\n${bullets.map(b => "• " + b).join("\n")}\n\n${isEn ? "Source: " : "來源："}${source}\n${isEn ? "Next step: " : "下一步："}${nextStep}`,
+            source: source
           };
         }
       }
     }
 
-    if (lang === "en") {
+    if (isEn) {
       return {
         type: "local_rag_fallback",
-        model: "Local Knowledge Base",
-        content: `Hello! Regarding your query on "${query}", please refer to official Lingnan University guidelines. For courses and academic matters, contact the Registry. For hostels, ILP, and transport, contact the Office of Student Affairs (OSA).\n\nPlease verify critical dates against the official AY2026-27 calendar.`,
+        model: "Official Knowledge Base (Grounded RAG)",
+        content: `Hello! Regarding your inquiry on "${query}", please refer to official Lingnan University guidelines.\n\n• For courses and academic regulations, please contact the Registry.\n• For hostel residency, ILP units, and student life, contact the Office of Student Affairs (OSA).\n\nPlease verify critical dates against the official AY2026-27 calendar.`,
         source: "Lingnan University Official Registry & OSA Portals (ln.edu.hk)"
       };
     }
 
     return {
       type: "local_rag_fallback",
-      model: "本地規章知識庫",
-      content: `你好！關於你查詢的「${query}」，請參考嶺南大學官方規章指引。選科與學術事宜請向教務處 (Registry) 查詢，住宿、ILP 及生活交通請聯絡學生事務處 (OSA)。\n\n重要事項請以 2026-27 學年官方公佈為準。`,
-      source: "Lingnan University Official Registry & OSA Portals (ln.edu.hk)"
+      model: "嶺南官方規章知識庫 (核實檢索)",
+      content: `你好！關於你查詢的「${query}」，請參考嶺南大學官方規章指引。\n\n• 選科與學術事宜請向教務處 (Registry) 查詢。\n• 住宿、ILP 及生活交通請聯絡學生事務處 (OSA)。\n\n重要事項請以 2026-27 學年官方公佈為準。`,
+      source: "嶺南大學教務處及學生事務處官方網頁 (ln.edu.hk)"
     };
   }
 }

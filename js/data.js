@@ -159,93 +159,149 @@ const LINGNAN_DATA = {
     {
       chunkId: "CHK-01",
       category: "Transport",
-      keywords: ["兆康", "siu hong", "行去", "步行", "mtr", "港鐵", "出口", "f出口", "k51", "walk"],
+      keywords: ["兆康", "siu hong", "行去", "步行", "mtr", "港鐵", "出口", "f出口", "k51", "walk", "get to lingnan"],
       shortAnswer: "由港鐵屯馬綫兆康站前往嶺南大學主要有步行或搭乘接駁巴士兩種方式：",
+      shortAnswerEn: "There are two main ways to travel from Siu Hong MTR Station (Tuen Ma Line) to Lingnan University:",
       bullets: [
         "步行方式：從兆康站 F 出口步出，沿著行人天橋一路前行，步行約 8–10 分鐘即可直達嶺南大學主校園行人天橋入口。",
         "巴士方式：於兆康站南公共運輸交匯處乘搭港鐵接駁巴士 K51（往富泰方向），在「嶺南大學」站下車即達正門。"
       ],
+      bulletsEn: [
+        "Walking: Take Exit F from Siu Hong MTR station and follow the covered pedestrian bridge for about 8–10 minutes directly to the Lingnan main campus footbridge entrance.",
+        "Feeder Bus: Take MTR Feeder Bus K51 (towards Fu Tai) from Siu Hong South Public Transport Interchange and alight at the 'Lingnan University' stop directly at the main entrance."
+      ],
       source: "Getting to Lingnan University (https://www.ln.edu.hk/about-lu/getting-to-lingnan)",
-      nextStep: "初次抵達的新生可在正門保安崗位索取校園平面地圖。"
+      sourceEn: "Getting to Lingnan University (https://www.ln.edu.hk/about-lu/getting-to-lingnan)",
+      nextStep: "初次抵達的新生可在正門保安崗位索取校園平面地圖。",
+      nextStepEn: "First-time visitors can pick up a campus map at the main gate security post."
     },
     {
       chunkId: "CHK-02",
       category: "Transport",
-      keywords: ["機場", "airport", "hkia", "抵港", "深圳灣", "口岸", "落馬洲", "高鐵"],
+      keywords: ["機場", "airport", "hkia", "抵港", "深圳灣", "口岸", "落馬洲", "高鐵", "border"],
       shortAnswer: "由香港國際機場或各大陸路口岸前往嶺南大學交通路線如下：",
+      shortAnswerEn: "Public transport routes to Lingnan University from Hong Kong International Airport (HKIA) and mainland border crossings:",
       bullets: [
         "香港國際機場出發：於機場地面運輸中心搭乘龍運巴士 A33X 或 E33P 直達屯門。",
         "深圳灣口岸出發：搭乘城巴 B3A 巴士抵達屯門市中心或富泰邨，鄰近嶺南大學校園。",
         "落馬洲口岸出發：搭乘九巴 B1 到元朗，轉乘港鐵屯馬綫至兆康站 F 出口。"
       ],
+      bulletsEn: [
+        "From HKIA: Board Long Win Bus A33X or E33P at the Airport Ground Transportation Centre directly to Tuen Mun.",
+        "From Shenzhen Bay Port: Take Citybus B3A to Tuen Mun Town Centre or Fu Tai Estate, directly adjacent to campus.",
+        "From Lok Ma Chau / Futian Port: Take KMB Bus B1 to Yuen Long, then transfer to the MTR Tuen Ma Line to Siu Hong Station (Exit F)."
+      ],
       source: "OSA — Transportation & Arrivals Guide (https://www.ln.edu.hk/osa/student-experience/cultural-integration/living-in-hong-kong/transportation)",
-      nextStep: "非本地新生抵港前可先加入迎新群組留意機場專車接待資訊。"
+      sourceEn: "OSA — Transportation & Arrivals Guide (https://www.ln.edu.hk/osa/student-experience/cultural-integration/living-in-hong-kong/transportation)",
+      nextStep: "非本地新生抵港前可先加入迎新群組留意機場專車接待資訊。",
+      nextStepEn: "Non-local freshmen should join orientation arrival chats for special campus pickup arrangements."
     },
     {
       chunkId: "CHK-03",
       category: "ILP",
-      keywords: ["ilp", "2026", "unit", "學分", "畢業要求", "畢業", "幾多", "requirement"],
+      keywords: ["ilp", "2026", "unit", "學分", "畢業要求", "畢業", "幾多", "requirement", "graduate", "intake"],
       shortAnswer: "2026-27 學年或之後入學的四年制全日制本科生，畢業需累計修滿 75 個 ILP 單位：",
+      shortAnswerEn: "For 4-year full-time undergraduate students admitted in AY2026-27 or after, a total of 75 Integrated Learning Programme (ILP) units are required for graduation:",
       bullets: [
         "六大核心範疇 (6 Core Domains)：每個範疇必須修滿至少 3 個單位（合共 18 units）。",
         "自由選修單位 (Free Electives)：由學生自由選讀各範疇認可活動，累計 42 個單位。",
         "新生定向活動 (New Student Orientation, NSO)：第一年必須完成 15 個 NSO 單位。"
       ],
+      bulletsEn: [
+        "Six Core Domains: You must complete at least 3 units in each of the six core domains (totaling 18 units minimum).",
+        "Free Electives: 42 units freely chosen by the student from any approved ILP activities.",
+        "New Student Orientation (NSO): You must complete 15 NSO units during your first year of study."
+      ],
       source: "OSA — ILP Unit Requirements for Admitted AY2026-27+ (https://www.ln.edu.hk/osa/ilp/about/ilp-unit-requirements-for-students-admitted-in-ay2026-27-or-after)",
-      nextStep: "學生可隨時登入 myLingnan Portal 內的 ILP System 查閱個人修讀進度。"
+      sourceEn: "OSA — ILP Unit Requirements for Admitted AY2026-27+ (https://www.ln.edu.hk/osa/ilp/about/ilp-unit-requirements-for-students-admitted-in-ay2026-27-or-after)",
+      nextStep: "學生可隨時登入 myLingnan Portal 內的 ILP System 查閱個人修讀進度。",
+      nextStepEn: "Students can log in to the myLingnan Portal at any time to monitor their real-time ILP progress."
     },
     {
       chunkId: "CHK-05",
       category: "Courses",
-      keywords: ["學分", "上限", "credit", "credit limit", "18學分", "33學分", "36學分", "term credit adjustment"],
+      keywords: ["學分", "上限", "credit", "credit limit", "18學分", "33學分", "36學分", "term credit adjustment", "overload"],
       shortAnswer: "嶺南大學高年級學生每學年設有嚴格的學分上限規範（正常每學期 15–18 學分）：",
+      shortAnswerEn: "Lingnan University enforces strict credit limits per academic year (normal load is 15–18 credits per term):",
       bullets: [
         "全年學分上限：Year-2 或以上學生全年最高修讀上限為 33 學分。",
         "兩學期皆修 18 分之情況：若兩學期均修讀 18 分（總和 36 分），已超出 33 分年度上限。",
         "超額申請流程：學生必須透過 Portal 提交「Term Credit Adjustment」申請表格由 Programme Director 審批。"
       ],
+      bulletsEn: [
+        "Annual Credit Limit: The maximum annual credit load for Year-2 or above students is 33 credits.",
+        "Taking 18 credits in both terms: Taking 18 credits in both Term 1 and Term 2 (total 36 credits) exceeds the 33-credit annual cap.",
+        "Credit Overload Application: You must submit an online 'Term Credit Adjustment' request via the Portal for Programme Director approval."
+      ],
       source: "Registry — Regulations and Guidelines on Credit Load (https://www.ln.edu.hk/reg/undergraduate-programmes/regulations-and-guidelines)",
-      nextStep: "建議於開學前登入 Banner 系統查閱個人 Degree Works。"
+      sourceEn: "Registry — Regulations and Guidelines on Credit Load (https://www.ln.edu.hk/reg/undergraduate-programmes/regulations-and-guidelines)",
+      nextStep: "建議於開學前登入 Banner 系統查閱個人 Degree Works。",
+      nextStepEn: "Check your Degree Works evaluation in the Banner system before the term starts."
     },
     {
       chunkId: "CHK-06",
       category: "Courses",
-      keywords: ["add/drop", "加退選", "改科", "term 2 add drop", "幾時改科", "important dates"],
+      keywords: ["add/drop", "加退選", "改科", "term 2 add drop", "幾時改科", "important dates", "calendar"],
       shortAnswer: "2026-27 學年課程加退選 (Add/Drop Period) 及校曆重要時程安排如下：",
+      shortAnswerEn: "Key academic dates and Add/Drop schedules for Academic Year 2026-27:",
       bullets: [
         "第一學期 (Term 1) 課堂結束日：2026 年 11 月 30 日。",
         "畢業典禮 (Congregation) 停課期：2026 年 12 月 1 日至 2 日全校停課。",
         "第一學期考試週：2026 年 12 月 8 日起展開。",
         "第二學期 (Term 2) 加退選時段：2027 年 1 月 5 日至 1 月 14 日。"
       ],
+      bulletsEn: [
+        "Term 1 Classes End: 30 November 2026.",
+        "Congregation (Classes Suspended): 1–2 December 2026.",
+        "Term 1 Final Examination Period: Starts on 8 December 2026.",
+        "Term 2 Add/Drop Period: 5 January 2027 to 14 January 2027."
+      ],
       source: "Registry — Important Dates & Academic Calendar 2026-27 (https://www.ln.edu.hk/reg/undergraduate-programmes/important-dates)",
-      nextStep: "請於加退選首日提早登入 Banner 系統排隊。"
+      sourceEn: "Registry — Important Dates & Academic Calendar 2026-27 (https://www.ln.edu.hk/reg/undergraduate-programmes/important-dates)",
+      nextStep: "請於加退選首日提早登入 Banner 系統排隊。",
+      nextStepEn: "Log in early on the first morning of Add/Drop to secure your preferred courses in Banner."
     },
     {
       chunkId: "CHK-08",
       category: "Hostel",
-      keywords: ["非本地生", "non-local", "宿舍申請", "hostel", "宿位", "住宿保證"],
+      keywords: ["非本地生", "non-local", "宿舍申請", "hostel", "宿位", "住宿保證", "guarantee"],
       shortAnswer: "非本地生在嶺南大學的宿舍申請資格與宿位分配政策：",
+      shortAnswerEn: "Hostel residency eligibility and allocation policy for non-local students at Lingnan University:",
       bullets: [
         "全日制 UGC 資助本科新生：享有首兩年 100% 宿位保證政策，但仍必須於截止日前確認繳費。",
         "自資學士或研究生：需於指定申請輪次自行提出申請，名額按抽籤分配。",
         "國際交換生：宿位由全球教育處 (OGE) 統籌預先保留。"
       ],
+      bulletsEn: [
+        "Full-time UGC-funded Freshmen: Enjoy a 100% residency guarantee for their first two years of study, provided application and fee payment deadlines are met.",
+        "Self-financed Undergraduate / Postgraduate Students: Must apply through designated hostel rounds; allocations are subject to lottery.",
+        "International Exchange Students: Hall places are pre-reserved and coordinated directly by the Office of Global Education (OGE)."
+      ],
       source: "OSA — Student Hostel Policy & Freshmen Information (https://www.ln.edu.hk/osa/residential-life/student-hostel)",
-      nextStep: "請留意個人學生電郵以獲取宿位確認通知。"
+      sourceEn: "OSA — Student Hostel Policy & Freshmen Information (https://www.ln.edu.hk/osa/residential-life/student-hostel)",
+      nextStep: "請留意個人學生電郵以獲取宿位確認通知。",
+      nextStepEn: "Monitor your official Lingnan student email for room allocation notices and payment deadlines."
     },
     {
       chunkId: "CHK-09",
       category: "Hostel",
-      keywords: ["換房", "room swap", "轉房", "調房"],
+      keywords: ["換房", "room swap", "轉房", "調房", "swap"],
       shortAnswer: "嶺大宿舍換房 (Room Swapping) 實施嚴格的雙向對換原則：",
+      shortAnswerEn: "Room swapping in Lingnan University student hostels is governed by a strict mutual exchange policy:",
       bullets: [
         "雙向對換原則 (Mutual Swap)：宿舍管理處只接受雙方宿生達成共識的互換申請。",
         "開放時段：通常於 12 月中旬至下學期開學第一週內辦理。",
         "嚴禁私下調換床位，否則將被取消宿位。"
       ],
+      bulletsEn: [
+        "Mutual Swap Principle: The hostel office only accepts room swap requests where both residents have reached mutual consent.",
+        "Application Window: Typically opens in mid-December and during the first week of Term 2.",
+        "Unauthorized bed swapping without official approval is strictly prohibited and may result in immediate residency termination."
+      ],
       source: "OSA — Student Hostel Application & Room Swapping Procedures (https://www.ln.edu.hk/osa/residential-life/student-hostel)",
-      nextStep: "如需換房請聯絡 Resident Tutor 了解詳情。"
+      sourceEn: "OSA — Student Hostel Application & Room Swapping Procedures (https://www.ln.edu.hk/osa/residential-life/student-hostel)",
+      nextStep: "如需換房請聯絡 Resident Tutor 了解詳情。",
+      nextStepEn: "Speak to your hall Resident Tutor (RT) or Warden's Office to obtain the official mutual room swap form."
     }
   ]
 };
