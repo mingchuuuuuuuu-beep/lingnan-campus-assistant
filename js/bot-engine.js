@@ -163,6 +163,12 @@ Line Y: Next step: Who to contact or action to take.
       return {
         type: "attack_refused",
         nodesTraversed: ["Guard (守門檢查)", "Refuse (防護拒絕)"],
+        thinkingProcess: [
+          `[1. 安全警報] Guard 節點偵測到「提示詞洩露 / 個資刺探」特徵模式。`,
+          `[2. 威脅分析] 識別為 Adversarial Prompt Injection（對抗性注入攻擊）。`,
+          `[3. 防護策略] 執行安全阻斷協議，拒絕透露底層 Prompt，禁止讀取學生隱私。`,
+          `[4. 輸出重定向] 保持助手專業角色，禮貌引導回正常校園諮詢。`
+        ],
         shortAnswer: "拒絕要求：系統已啟動安全防禦機制。",
         explanation: [
           "作為嶺南校園助手，我無法透露底層系統提示詞 (System Prompt) 或內部指令架構。",
@@ -188,6 +194,12 @@ Line Y: Next step: Who to contact or action to take.
       return {
         type: "out_of_scope",
         nodesTraversed: ["Guard (守門檢查)", "Refuse (範圍外拒絕)"],
+        thinkingProcess: [
+          `[1. 範圍校驗] 檢測問題類型：「${userInput}」，比對服務範疇定義。`,
+          `[2. 規則觸發] 命中限制領域（學術代寫／實時天氣），觸發學術誠信保護。`,
+          `[3. 拒絕決定] 依據 Section 3.7 規則拒絕處理，避免學術不端行為。`,
+          `[4. 指引分流] 提供天文台或學科教師等適當之官方管道。`
+        ],
         shortAnswer: "超出服務範圍：助手僅提供校園行政與學習指引。",
         explanation: [
           "本助手專門協助解答嶺南大學選科、學分上限、ILP 綜合學習單位、宿舍規則及交通抵校指引。",
@@ -207,6 +219,12 @@ Line Y: Next step: Who to contact or action to take.
       return {
         type: "clarification_needed",
         nodesTraversed: ["Intent (宿舍意圖)", "Clarify (需反問澄清)"],
+        thinkingProcess: [
+          `[1. 意圖識別] 用戶意圖為【宿舍換房申請 (Room Swapping)】。`,
+          `[2. 參數審查] 檢查必備上下文：缺少【就讀身分（在宿生/新生）】及【申請學期】。`,
+          `[3. 決策分支] 觸發 Step ④ Clarify 反問節點，暫緩直接輸出錯誤指引。`,
+          `[4. 生成反問] 構造單一簡明反問句，主動引導用戶補充資訊。`
+        ],
         shortAnswer: "需要更多資訊：請先確認你的學生身分與學期。",
         explanation: [
           "嶺南大學學生宿舍換房規定因學生身分而異。",
@@ -227,6 +245,12 @@ Line Y: Next step: Who to contact or action to take.
       return {
         type: "missing_knowledge",
         nodesTraversed: ["Intent (意圖分類)", "Retrieve (檢索知識庫)", "Self-check (確認無資料)", "Output (誠實不知)"],
+        thinkingProcess: [
+          `[1. 實體識別] 查詢標的：「學生村飯堂即時營業時間」。`,
+          `[2. 檢索執行] 於已索引官方庫檢索，無收錄本日各攤位之即時打烊時間。`,
+          `[3. 防幻覺自檢] 觸發「誠實原則 (Honesty)」，禁止 LLM 猜測營業時間。`,
+          `[4. 轉向指引] 生成「搵唔到」標準回應，導向 OSA 膳食委員會通告。`
+        ],
         shortAnswer: "知識庫暫未收錄此資料：抱歉，官方資料庫中無此即時資訊。",
         explanation: [
           "根據檢索結果，官方知識庫目前僅收錄教學日曆、選科、ILP、宿舍章則與抵校交通，未涵蓋學生村飯堂每日即時營業時間。",
@@ -269,6 +293,13 @@ Line Y: Next step: Who to contact or action to take.
       return {
         type: "grounded_rag_answer",
         nodesTraversed: ["Guard (通過)", `Intent (${bestMatch.category})`, `Retrieve (命中 ${bestMatch.chunkId})`, "Generate (RAG 合成)", "Self-check (核對無幻覺)", "Output"],
+        thinkingProcess: [
+          `[1. 語義理解] 分析用戶輸入：「${userInput}」，識別核心實體與意圖標籤為【${bestMatch.category}】。`,
+          `[2. 守門校驗] 執行安全檢查：無提示詞注入攻擊特徵，無學術代寫要求，符合校園規範。`,
+          `[3. 向量檢索] 在 11 組官方規章切片中比對，最高相關度匹配為【${bestMatch.chunkId}】（得分: ${highestScore}）。`,
+          `[4. 閉卷生成] 依據檢索文本抽取關鍵條文，過濾未知資訊，嚴格抑制 AI 幻覺。`,
+          `[5. 格式自檢] 驗證包含短答、列點拆解、官方出處及後續聯絡指引，完成回應構建。`
+        ],
         shortAnswer: bestMatch.shortAnswer,
         explanation: bestMatch.bullets,
         source: bestMatch.source,
@@ -280,6 +311,12 @@ Line Y: Next step: Who to contact or action to take.
     return {
       type: "general_inquiry",
       nodesTraversed: ["Guard (通過)", "Intent (通用校園查詢)", "Retrieve (檢索全校政策庫)", "Generate (綜合指引)", "Self-check", "Output"],
+      thinkingProcess: [
+        `[1. 語義理解] 接收用戶查詢：「${userInput}」，提取有效詞彙進行知識庫廣度檢索。`,
+        `[2. 檢索評估] 比對官方政策庫未達特異閾值（無直接專屬條款），啟動通用校園諮詢流程。`,
+        `[3. 自省原則] 嚴格遵守閉卷 RAG 原則，不對未收錄之特定個人細節進行臆測。`,
+        `[4. 路由引導] 整合教務處 (Registry) 與學生事務處 (OSA) 官方諮詢渠道供用戶查閱。`
+      ],
       shortAnswer: `針對你查詢的「${userInput}」，以下為嶺南大學官方相關指引摘要：`,
       explanation: [
         "嶺南大學主要學術選課由教務處 (Registry) 統籌，校園生活、住宿及 ILP 則由學生事務處 (OSA) 負責。",
