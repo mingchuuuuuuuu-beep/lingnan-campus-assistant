@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>嶺南校園助手 | Lingnan Campus Assistant (Gemini 3.1 Flash Lite)</title>
+  <title>Lingnan Campus Assistant | 嶺南校園助手</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
@@ -28,37 +28,45 @@
 
   <!-- Header -->
   <header class="bg-lnBlue text-white shadow-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
         <div class="w-9 h-9 rounded-lg bg-lnGold flex items-center justify-center font-bold text-lnBlue shadow text-base">
           LU
         </div>
         <div>
           <div class="flex items-center space-x-2">
-            <h1 class="text-base sm:text-lg font-bold tracking-tight">Lingnan Campus Assistant</h1>
+            <h1 class="text-base sm:text-lg font-bold tracking-tight" data-i18n="app_title">Lingnan Campus Assistant</h1>
             <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[11px] px-2 py-0.5 rounded-full font-mono flex items-center gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Gemini 3.1 Flash Lite
             </span>
           </div>
-          <p class="text-xs text-slate-300">嶺南大學校園 AI 助手 (CCC8015 專題展示)</p>
+          <p class="text-xs text-slate-300" data-i18n="app_subtitle">嶺南大學校園 AI 助手 (CCC8015 專題展示)</p>
         </div>
       </div>
 
-      <!-- Navigation: Only 3 Clean Tabs -->
-      <nav class="flex items-center gap-2 text-xs sm:text-sm" id="nav-tabs">
-        <button class="tab-btn active px-3.5 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-chat">
-          <i data-lucide="message-square" class="w-4 h-4 text-lnGold"></i>
-          <span>智能對話 (Chatbot)</span>
-        </button>
-        <button class="tab-btn px-3.5 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-kb">
-          <i data-lucide="database" class="w-4 h-4 text-lnGold"></i>
-          <span>官方知識庫</span>
-        </button>
-        <button class="tab-btn px-3.5 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-workflow">
-          <i data-lucide="git-branch" class="w-4 h-4 text-lnGold"></i>
-          <span>一頁運行原理</span>
-        </button>
-      </nav>
+      <!-- Navigation & Language Switch -->
+      <div class="flex items-center gap-2.5 sm:gap-4 flex-wrap">
+        <nav class="flex items-center gap-1.5 text-xs sm:text-sm" id="nav-tabs">
+          <button class="tab-btn active px-3 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-chat">
+            <i data-lucide="message-square" class="w-4 h-4 text-lnGold"></i>
+            <span data-i18n="nav_chat">智能對話</span>
+          </button>
+          <button class="tab-btn px-3 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-kb">
+            <i data-lucide="database" class="w-4 h-4 text-lnGold"></i>
+            <span data-i18n="nav_kb">官方知識庫</span>
+          </button>
+          <button class="tab-btn px-3 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-workflow">
+            <i data-lucide="git-branch" class="w-4 h-4 text-lnGold"></i>
+            <span data-i18n="nav_workflow">一頁運行原理</span>
+          </button>
+        </nav>
+
+        <!-- Language Switcher (zh / en) -->
+        <div class="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-600 text-xs shadow-inner">
+          <button id="lang-btn-zh" class="lang-btn px-2.5 py-1 rounded-md font-bold transition bg-lnGold text-lnBlue shadow">中文</button>
+          <button id="lang-btn-en" class="lang-btn px-2.5 py-1 rounded-md font-medium transition text-slate-300 hover:text-white">EN</button>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -72,29 +80,12 @@
         <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
           <span class="flex items-center gap-1">
             <i data-lucide="zap" class="w-3.5 h-3.5 text-lnGold"></i>
-            常見問題快速點選 (Quick Questions)：
+            <span data-i18n="chips_title">常見問題快速點選 (Quick Questions)：</span>
           </span>
-          <span class="text-[11px] text-emerald-600 font-mono">100% 真實大模型即時生成</span>
+          <span class="text-[11px] text-emerald-600 font-mono" data-i18n="chips_badge">100% 真實大模型即時生成</span>
         </div>
         <div class="flex flex-wrap gap-2 text-xs" id="quick-chips">
-          <button class="chip-btn px-2.5 py-1.5 bg-slate-50 hover:bg-blue-50 hover:text-lnBlue border border-slate-200 rounded-lg transition" data-query="由兆康站點行去嶺南大學？">
-            🚶 兆康站步行至嶺大路線
-          </button>
-          <button class="chip-btn px-2.5 py-1.5 bg-slate-50 hover:bg-blue-50 hover:text-lnBlue border border-slate-200 rounded-lg transition" data-query="我 2026 入學四年制，ILP 畢業要幾多 unit？">
-            🎓 2026 入學 75 ILP 要求
-          </button>
-          <button class="chip-btn px-2.5 py-1.5 bg-slate-50 hover:bg-blue-50 hover:text-lnBlue border border-slate-200 rounded-lg transition" data-query="二年級想 T1、T2 都修 18 學分得唔得？T2 幾時可以改科？">
-            📚 全年學分上限與加退選
-          </button>
-          <button class="chip-btn px-2.5 py-1.5 bg-slate-50 hover:bg-amber-50 hover:text-amber-800 border border-slate-200 rounded-lg transition" data-query="我可唔可以換房？">
-            🏠 宿舍換房手續與限制
-          </button>
-          <button class="chip-btn px-2.5 py-1.5 bg-slate-50 hover:bg-emerald-50 hover:text-emerald-800 border border-slate-200 rounded-lg transition" data-query="我係非本地生，宿舍要唔要自己申請？">
-            🌏 非本地新生宿舍保證
-          </button>
-          <button class="chip-btn px-2.5 py-1.5 bg-slate-50 hover:bg-purple-50 hover:text-purple-800 border border-slate-200 rounded-lg transition" data-query="乜嘢係 CRN？選科出現 prerequisite error 點解？">
-            🔍 什麼是 CRN 與選科錯誤
-          </button>
+          <!-- Populated dynamically based on language -->
         </div>
       </div>
 
@@ -110,36 +101,21 @@
               <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
             </div>
             <div>
-              <div class="text-xs sm:text-sm font-bold text-slate-800">嶺南校園助手 (Lingnan Campus Assistant)</div>
+              <div class="text-xs sm:text-sm font-bold text-slate-800" data-i18n="chat_box_title">嶺南校園助手 (Lingnan Campus Assistant)</div>
               <div class="text-[11px] text-slate-500 flex items-center gap-1">
-                <span>模型：Google Gemini 3.1 Flash Lite</span> · <span class="text-emerald-600 font-medium">免費額度 (Free Quota)</span>
+                <span>Model: Google Gemini 3.1 Flash Lite</span> · <span class="text-emerald-600 font-medium" data-i18n="chat_quota_badge">免費額度 (Free Quota)</span>
               </div>
             </div>
           </div>
           <button id="clear-chat-btn" class="text-xs px-2.5 py-1 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-100 transition flex items-center gap-1">
-            <i data-lucide="rotate-ccw" class="w-3 h-3"></i>重置
+            <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
+            <span data-i18n="btn_clear">重置</span>
           </button>
         </div>
 
         <!-- Messages Stream Area -->
         <div id="messages-container" class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
-          <!-- Initial Welcome Message -->
-          <div class="flex items-start space-x-3">
-            <div class="w-8 h-8 rounded-full bg-lnBlue text-white flex items-center justify-center font-bold text-xs shrink-0 mt-1">
-              AI
-            </div>
-            <div class="chat-bubble-bot p-4 rounded-2xl max-w-2xl text-sm leading-relaxed">
-              <p class="font-bold text-lnBlue mb-1">同學你好！我係「嶺南校園助手」👋</p>
-              <p class="text-slate-600 mb-2">我已連接 <b>Google Gemini 3.1 Flash Lite</b> 大模型，結合嶺南大學教務處 (Registry) 及學生事務處 (OSA) 官方知識庫，為你解答：</p>
-              <div class="grid grid-cols-2 gap-2 my-2 text-xs text-slate-600">
-                <div class="p-2 bg-slate-50 rounded-lg border border-slate-100">📌 選科、加退選、學分上限 (33分)</div>
-                <div class="p-2 bg-slate-50 rounded-lg border border-slate-100">📌 綜合學習計劃 (75 ILP units)</div>
-                <div class="p-2 bg-slate-50 rounded-lg border border-slate-100">📌 學生宿舍申請、換房手續</div>
-                <div class="p-2 bg-slate-50 rounded-lg border border-slate-100">📌 兆康站步行、機場口岸抵校交通</div>
-              </div>
-              <p class="text-xs text-slate-500 mt-2">💡 你可以直接點擊上方快捷問題，或者在下方輸入框用中文或英文隨意發問！</p>
-            </div>
-          </div>
+          <!-- Initial Welcome Message rendered by app.js based on language -->
         </div>
 
         <!-- Chat Input Form -->
@@ -156,7 +132,7 @@
               type="submit" 
               class="px-5 py-2.5 bg-lnBlue hover:bg-lnBlueHover text-white rounded-xl text-sm font-medium shadow-sm transition flex items-center gap-1.5"
             >
-              <span>發送</span>
+              <span data-i18n="btn_send">發送</span>
               <i data-lucide="send" class="w-4 h-4"></i>
             </button>
           </form>
@@ -171,13 +147,13 @@
           <div>
             <h2 class="text-xl font-bold text-lnBlue flex items-center gap-2">
               <i data-lucide="database" class="w-6 h-6 text-lnGold"></i>
-              嶺南大學官方知識庫清單 (Official Knowledge Base)
+              <span data-i18n="kb_title">嶺南大學官方知識庫清單 (Official Knowledge Base)</span>
             </h2>
-            <p class="text-xs sm:text-sm text-slate-600 mt-1">
+            <p class="text-xs sm:text-sm text-slate-600 mt-1" data-i18n="kb_desc">
               本助手的所有回答均以此 11 組已核實的官方頁面為事實依據（Ground Truth），杜絕 AI 幻覺。
             </p>
           </div>
-          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full font-medium">
+          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full font-medium" data-i18n="kb_badge">
             全數 11 組來源經官方核實 (HTTP 200)
           </span>
         </div>
@@ -186,12 +162,12 @@
           <table class="w-full text-left text-xs border border-slate-200 rounded-xl overflow-hidden">
             <thead class="bg-slate-100 text-slate-700 uppercase font-semibold">
               <tr>
-                <th class="p-3">編號</th>
-                <th class="p-3">類別</th>
-                <th class="p-3">官方頁面名稱 / 文件</th>
-                <th class="p-3">規章摘要</th>
-                <th class="p-3 whitespace-nowrap">擷取日期</th>
-                <th class="p-3">狀態</th>
+                <th class="p-3" data-i18n="th_id">編號</th>
+                <th class="p-3" data-i18n="th_cat">類別</th>
+                <th class="p-3" data-i18n="th_title">官方頁面名稱 / 文件</th>
+                <th class="p-3" data-i18n="th_summary">規章摘要</th>
+                <th class="p-3 whitespace-nowrap" data-i18n="th_date">擷取日期</th>
+                <th class="p-3" data-i18n="th_status">狀態</th>
               </tr>
             </thead>
             <tbody id="kb-table-body" class="divide-y divide-slate-200">
@@ -208,55 +184,24 @@
         <div>
           <h2 class="text-xl font-bold text-lnBlue flex items-center gap-2">
             <i data-lucide="git-branch" class="w-6 h-6 text-lnGold"></i>
-            一頁運行原理：RAG 檢索增強生成架構
+            <span data-i18n="wf_title">一頁運行原理：RAG 檢索增強生成架構</span>
           </h2>
-          <p class="text-xs sm:text-sm text-slate-600 mt-1">
+          <p class="text-xs sm:text-sm text-slate-600 mt-1" data-i18n="wf_desc">
             為什麼不用純 LLM？普通大模型會憑空捏造過時日期與規則。本系統採用 RAG (檢索增強生成)，確保每一次回答都經過官方來源核實。
           </p>
         </div>
 
         <!-- 8-Step Visual Pipeline -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-6">
-          <div class="p-4 rounded-xl border border-blue-200 bg-blue-50/60">
-            <div class="text-xs font-bold text-blue-800 mb-1">① 用戶輸入 (Input)</div>
-            <p class="text-xs text-slate-600">接收中英雙語或廣東話問題，提取核心查詢實體。</p>
-          </div>
-          <div class="p-4 rounded-xl border border-indigo-200 bg-indigo-50/60">
-            <div class="text-xs font-bold text-indigo-800 mb-1">② 安全守門 (Guard)</div>
-            <p class="text-xs text-slate-600">檢查提示詞攻擊 (Prompt Injection) 與作業代寫，防範安全漏洞。</p>
-          </div>
-          <div class="p-4 rounded-xl border border-sky-200 bg-sky-50/60">
-            <div class="text-xs font-bold text-sky-800 mb-1">③ 意圖分類 (Intent)</div>
-            <p class="text-xs text-slate-600">將問題劃分為選科 (Course)、ILP、宿舍、交通等領域。</p>
-          </div>
-          <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/60">
-            <div class="text-xs font-bold text-amber-800 mb-1">④ 反問澄清 (Clarify)</div>
-            <p class="text-xs text-slate-600">若缺少必要條件（如換房未註明學期），主動反問一條問題。</p>
-          </div>
-          <div class="p-4 rounded-xl border border-emerald-200 bg-emerald-50/60">
-            <div class="text-xs font-bold text-emerald-800 mb-1">⑤ 官方知識檢索 (Retrieve)</div>
-            <p class="text-xs text-slate-600">從 11 篇官方文件中檢索相關規章切片，作為精確上下文。</p>
-          </div>
-          <div class="p-4 rounded-xl border border-teal-200 bg-teal-50/60">
-            <div class="text-xs font-bold text-teal-800 mb-1">⑥ 大模型生成 (Generate)</div>
-            <p class="text-xs text-slate-600">由 <b>Gemini 3.1 Flash Lite</b> 結合檢索上下文即時生成答案。</p>
-          </div>
-          <div class="p-4 rounded-xl border border-purple-200 bg-purple-50/60">
-            <div class="text-xs font-bold text-purple-800 mb-1">⑦ 自檢校驗 (Self-check)</div>
-            <p class="text-xs text-slate-600">核對日期與數字是否存在於官方上下文，確保無幻覺。</p>
-          </div>
-          <div class="p-4 rounded-xl border border-lnBlue bg-blue-900 text-white">
-            <div class="text-xs font-bold text-yellow-300 mb-1">⑧ 結構化輸出 (Output)</div>
-            <p class="text-xs text-slate-200">短答 → 條列解釋 → 官方來源連結 → 下一步指引。</p>
-          </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-6" id="workflow-cards">
+          <!-- Rendered dynamically by app.js based on language -->
         </div>
 
         <!-- Key Features Overview -->
         <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
-          <div class="font-bold text-slate-900 text-sm">技術指標與專案承諾：</div>
-          <p>• <b>零成本運作 ($0 Cost)</b>：採用 Google Gemini 免費配額 (Free Quota) 與 GitHub Pages 免費 CDN 靜態託管。</p>
-          <p>• <b>嚴格防幻覺 (No Hallucination)</b>：知識庫無收錄的資訊（如飯堂每日即時收工時間）誠實回覆不知，並引導至負責辦公室。</p>
-          <p>• <b>免責聲明</b>：本系統為嶺南大學 CCC8015 生成式 AI 課堂專題展示，非官方職員，重要學業決定請以 Registry 及 OSA 為準。</p>
+          <div class="font-bold text-slate-900 text-sm" data-i18n="wf_specs_title">技術指標與專案承諾：</div>
+          <p data-i18n="wf_specs_1">• <b>零成本運作 ($0 Cost)</b>：採用 Google Gemini 免費配額 (Free Quota) 與 GitHub Pages 免費 CDN 靜態託管。</p>
+          <p data-i18n="wf_specs_2">• <b>嚴格防幻覺 (No Hallucination)</b>：知識庫無收錄的資訊誠實回覆不知，並引導至負責辦公室。</p>
+          <p data-i18n="wf_specs_3">• <b>免責聲明</b>：本系統為嶺南大學 CCC8015 生成式 AI 課堂專題展示，非官方職員，重要學業決定請以 Registry 及 OSA 為準。</p>
         </div>
       </div>
     </section>
@@ -266,8 +211,8 @@
   <!-- Footer -->
   <footer class="bg-slate-900 text-slate-400 py-5 border-t border-slate-800 text-xs">
     <div class="max-w-6xl mx-auto px-4 text-center space-y-1">
-      <p>嶺南大學 · CCC8015 生成式人工智能 (Generative AI) 專題研究展示網站</p>
-      <p class="text-slate-500">模型：Google Gemini 3.1 Flash Lite (Free Quota) · 託管於 GitHub Pages ($0 成本)</p>
+      <p data-i18n="footer_title">嶺南大學 · CCC8015 生成式人工智能 (Generative AI) 專題研究展示網站</p>
+      <p class="text-slate-500" data-i18n="footer_sub">模型：Google Gemini 3.1 Flash Lite (Free Quota) · 託管於 GitHub Pages ($0 成本)</p>
     </div>
   </footer>
 
