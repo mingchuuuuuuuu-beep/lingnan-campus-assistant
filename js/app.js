@@ -3,7 +3,8 @@
  * Streamlined UI Application Controller with zh/en Language Switching
  */
 
-let currentLang = localStorage.getItem("lingnan_lang") || "en";
+// Explicitly default to English ("en")
+let currentLang = localStorage.getItem("lingnan_lang_v3") || "en";
 
 const I18N = {
   zh: {
@@ -129,7 +130,7 @@ function initLanguageSwitcher() {
 
 function setLanguage(lang) {
   currentLang = lang;
-  localStorage.setItem("lingnan_lang", lang);
+  localStorage.setItem("lingnan_lang_v3", lang);
 
   const dict = I18N[lang] || I18N.zh;
 
@@ -184,8 +185,8 @@ function renderQuickChips(lang) {
 
   const chips = window.LINGNAN_DATA.quickChips[lang] || window.LINGNAN_DATA.quickChips.zh;
   container.innerHTML = chips.map(chip => `
-    <button class="chip-btn px-2.5 py-1.5 bg-slate-50 hover:bg-blue-50 hover:text-lnBlue border border-slate-200 rounded-lg transition" data-query="${chip.query}">
-      ${chip.label}
+    <button class="chip-btn px-3 py-1 bg-white hover:bg-amber-50 hover:border-lnGold hover:text-lnBlue border border-slate-200 rounded-lg text-xs whitespace-nowrap shrink-0 transition shadow-xs cursor-pointer flex items-center gap-1" data-query="${chip.query}">
+      <span>${chip.label}</span>
     </button>
   `).join("");
 
@@ -282,7 +283,7 @@ function renderWelcomeMessage(lang) {
         <div class="chat-bubble-bot p-4 rounded-2xl max-w-2xl text-sm leading-relaxed">
           <p class="font-bold text-lnBlue mb-1">${dict.welcome_title}</p>
           <p class="text-slate-600 mb-2">${dict.welcome_desc}</p>
-          <div class="grid grid-cols-2 gap-2 my-2 text-xs text-slate-600">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 my-2 text-xs text-slate-600">
             <div class="p-2 bg-slate-50 rounded-lg border border-slate-100">${dict.welcome_box_1}</div>
             <div class="p-2 bg-slate-50 rounded-lg border border-slate-100">${dict.welcome_box_2}</div>
             <div class="p-2 bg-slate-50 rounded-lg border border-slate-100">${dict.welcome_box_3}</div>

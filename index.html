@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Lingnan Campus Assistant | AI Agent (Gemini 3.1 Flash Lite)</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="css/styles.css?v=2.2">
+  <link rel="stylesheet" href="css/styles.css?v=2.4">
   <script>
     tailwind.config = {
       theme: {
@@ -24,141 +24,144 @@
     }
   </script>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+<body class="bg-slate-100 text-slate-800 h-full h-[100dvh] flex flex-col antialiased overflow-hidden select-none sm:select-auto">
 
-  <!-- Header -->
-  <header class="bg-lnBlue text-white shadow-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center space-x-3">
-        <div class="w-9 h-9 rounded-lg bg-lnGold flex items-center justify-center font-bold text-lnBlue shadow text-base">
-          LU
-        </div>
-        <div>
-          <div class="flex items-center space-x-2">
-            <h1 class="text-base sm:text-lg font-bold tracking-tight" data-i18n="app_title">Lingnan Campus Assistant</h1>
-            <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[11px] px-2 py-0.5 rounded-full font-mono flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Gemini 3.1 Flash Lite
-            </span>
+  <!-- Header (Sticky, Zero-waste, Highly responsive) -->
+  <header class="bg-lnBlue text-white shadow-md shrink-0 z-50">
+    <div class="max-w-6xl mx-auto px-3 sm:px-6 py-2 sm:py-2.5">
+      <!-- Top Row: LU Brand + Title + Model + Language Selector -->
+      <div class="flex items-center justify-between gap-2">
+        <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+          <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-lnGold flex items-center justify-center font-bold text-lnBlue shadow text-sm sm:text-base shrink-0">
+            LU
           </div>
-          <p class="text-xs text-slate-300" data-i18n="app_subtitle">Lingnan University Campus AI Assistant (CCC8015 Project)</p>
+          <div class="min-w-0">
+            <div class="flex items-center space-x-1.5 sm:space-x-2">
+              <h1 class="text-sm sm:text-base font-bold tracking-tight truncate" data-i18n="app_title">Lingnan Campus Assistant</h1>
+              <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] sm:text-[11px] px-1.5 py-0.5 rounded-full font-mono flex items-center gap-1 shrink-0">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>Gemini 3.1</span>
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-300 truncate hidden sm:block" data-i18n="app_subtitle">Lingnan University Campus AI Assistant (CCC8015 Project)</p>
+          </div>
+        </div>
+
+        <!-- Prominent Language Selector (Default: EN) -->
+        <div class="flex items-center bg-slate-900/95 px-1.5 py-0.5 sm:py-1 rounded-xl border border-lnGold shadow shrink-0">
+          <span class="text-xs text-yellow-300 font-bold px-1 sm:px-1.5 flex items-center gap-1">
+            <i data-lucide="globe" class="w-3.5 h-3.5 text-lnGold"></i>
+            <span class="text-[11px] hidden sm:inline">Lang:</span>
+          </span>
+          <button id="lang-btn-en" class="lang-btn px-2 sm:px-2.5 py-0.5 rounded-lg font-bold text-xs bg-lnGold text-lnBlue shadow transition cursor-pointer">EN</button>
+          <button id="lang-btn-zh" class="lang-btn px-2 sm:px-2.5 py-0.5 rounded-lg font-medium text-xs text-slate-300 hover:text-white transition cursor-pointer">中文</button>
         </div>
       </div>
 
-      <!-- Navigation & Prominent Language Selector -->
-      <div class="flex items-center gap-3 sm:gap-4 flex-wrap">
-        <!-- Navigation Tabs -->
-        <nav class="flex items-center gap-1.5 text-xs sm:text-sm" id="nav-tabs">
-          <button class="tab-btn active px-3 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-chat">
-            <i data-lucide="message-square" class="w-4 h-4 text-lnGold"></i>
+      <!-- Bottom Row: Navigation Tabs -->
+      <div class="mt-2 sm:mt-2.5 pt-1.5 sm:pt-2 border-t border-slate-700/60 flex items-center">
+        <nav class="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm w-full overflow-x-auto no-scrollbar" id="nav-tabs">
+          <button class="tab-btn active px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5 whitespace-nowrap shrink-0" data-tab="tab-chat">
+            <i data-lucide="message-square" class="w-3.5 h-3.5 text-lnGold"></i>
             <span data-i18n="nav_chat">Chatbot</span>
           </button>
-          <button class="tab-btn px-3 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-kb">
-            <i data-lucide="database" class="w-4 h-4 text-lnGold"></i>
+          <button class="tab-btn px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5 whitespace-nowrap shrink-0" data-tab="tab-kb">
+            <i data-lucide="database" class="w-3.5 h-3.5 text-lnGold"></i>
             <span data-i18n="nav_kb">Knowledge Base</span>
           </button>
-          <button class="tab-btn px-3 py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5" data-tab="tab-workflow">
-            <i data-lucide="git-branch" class="w-4 h-4 text-lnGold"></i>
+          <button class="tab-btn px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-slate-600 hover:bg-slate-700 transition flex items-center gap-1.5 whitespace-nowrap shrink-0" data-tab="tab-workflow">
+            <i data-lucide="git-branch" class="w-3.5 h-3.5 text-lnGold"></i>
             <span data-i18n="nav_workflow">One-Page Architecture</span>
           </button>
         </nav>
-
-        <!-- Prominent Language Selector (Default: EN) -->
-        <div class="flex items-center bg-slate-900/90 px-1.5 py-1 rounded-xl border-2 border-lnGold shadow-lg">
-          <span class="text-xs text-yellow-300 font-bold px-1.5 flex items-center gap-1">
-            <i data-lucide="globe" class="w-3.5 h-3.5 text-lnGold"></i>
-            <span class="hidden sm:inline">Lang:</span>
-          </span>
-          <button id="lang-btn-en" class="lang-btn px-3 py-1 rounded-lg font-bold text-xs bg-lnGold text-lnBlue shadow transition">EN</button>
-          <button id="lang-btn-zh" class="lang-btn px-3 py-1 rounded-lg font-medium text-xs text-slate-300 hover:text-white transition">中文</button>
-        </div>
       </div>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col">
+  <!-- Main Container: ZERO page overflow, flex-1 fills screen -->
+  <main class="flex-1 min-h-0 max-w-6xl w-full mx-auto p-2 sm:p-4 flex flex-col overflow-hidden">
 
-    <!-- 1. CHATBOT SECTION -->
-    <section id="tab-chat" class="tab-content flex-1 flex flex-col">
-      <!-- Quick Test Chips -->
-      <div class="mb-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
-        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
-          <span class="flex items-center gap-1">
-            <i data-lucide="zap" class="w-3.5 h-3.5 text-lnGold"></i>
-            <span data-i18n="chips_title">Quick Question Shortcuts:</span>
-          </span>
-          <span class="text-[11px] text-emerald-600 font-mono" data-i18n="chips_badge">Real-time Generative AI</span>
+    <!-- 1. CHATBOT SECTION: Fully fits viewport without outer page scroll -->
+    <section id="tab-chat" class="tab-content flex-1 min-h-0 flex flex-col overflow-hidden">
+      <!-- Quick Test Chips: Single horizontal scroll row -->
+      <div class="mb-1.5 sm:mb-2 shrink-0 bg-white px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-slate-200 shadow-xs flex items-center gap-2 overflow-hidden">
+        <div class="text-[11px] font-bold text-slate-500 uppercase tracking-wider shrink-0 flex items-center gap-1">
+          <i data-lucide="zap" class="w-3.5 h-3.5 text-lnGold"></i>
+          <span class="hidden sm:inline" data-i18n="chips_title">Quick Questions:</span>
         </div>
-        <div class="flex flex-wrap gap-2 text-xs" id="quick-chips">
+        <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5" id="quick-chips">
           <!-- Populated dynamically based on language (default: en) -->
         </div>
       </div>
 
-      <!-- Chat Container -->
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col flex-1 h-[620px] overflow-hidden">
+      <!-- Chat Container: Takes all remaining height -->
+      <div class="bg-white rounded-xl sm:rounded-2xl border border-slate-200 shadow-xs flex flex-col flex-1 min-h-0 overflow-hidden">
         <!-- Chat Header -->
-        <div class="px-5 py-3 border-b border-slate-100 bg-slate-50/80 flex items-center justify-between">
-          <div class="flex items-center space-x-2.5">
+        <div class="px-3 sm:px-4 py-2 border-b border-slate-100 bg-slate-50/90 flex items-center justify-between shrink-0">
+          <div class="flex items-center space-x-2">
             <div class="relative">
-              <div class="w-8 h-8 rounded-full bg-lnBlue text-white flex items-center justify-center font-bold text-xs">
+              <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-lnBlue text-white flex items-center justify-center font-bold text-xs">
                 AI
               </div>
-              <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
+              <span class="absolute bottom-0 right-0 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
             </div>
             <div>
-              <div class="text-xs sm:text-sm font-bold text-slate-800" data-i18n="chat_box_title">Lingnan Campus Assistant</div>
-              <div class="text-[11px] text-slate-500 flex items-center gap-1">
-                <span>Model: Google Gemini 3.1 Flash Lite</span> · <span class="text-emerald-600 font-medium" data-i18n="chat_quota_badge">Free Quota</span>
+              <div class="text-xs sm:text-sm font-bold text-slate-800 leading-tight" data-i18n="chat_box_title">Lingnan Campus Assistant</div>
+              <div class="text-[10px] sm:text-[11px] text-slate-500 flex items-center gap-1 leading-tight">
+                <span>Model: Gemini 3.1 Flash Lite</span> · <span class="text-emerald-600 font-medium" data-i18n="chat_quota_badge">Free Quota</span>
               </div>
             </div>
           </div>
-          <button id="clear-chat-btn" class="text-xs px-2.5 py-1 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-100 transition flex items-center gap-1">
+          <button id="clear-chat-btn" class="text-xs px-2 sm:px-2.5 py-1 border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-100 transition flex items-center gap-1 cursor-pointer">
             <i data-lucide="rotate-ccw" class="w-3 h-3"></i>
             <span data-i18n="btn_clear">Reset</span>
           </button>
         </div>
 
-        <!-- Messages Stream Area -->
-        <div id="messages-container" class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4">
+        <!-- Messages Stream Area: ONLY this element scrolls in the whole app! -->
+        <div id="messages-container" class="flex-1 min-h-0 p-3 sm:p-5 overflow-y-auto space-y-3.5 overscroll-contain">
           <!-- Initial Welcome Message rendered in English by default -->
         </div>
 
-        <!-- Chat Input Form -->
-        <div class="p-3.5 border-t border-slate-100 bg-white">
-          <form id="chat-form" class="flex items-center gap-2">
+        <!-- Chat Input Form: Pinned to bottom -->
+        <div class="p-2 sm:p-3 border-t border-slate-100 bg-white shrink-0">
+          <form id="chat-form" class="flex items-center gap-1.5 sm:gap-2">
             <input 
               type="text" 
               id="user-input" 
               placeholder="Ask any campus or academic question (e.g. How to walk from Siu Hong? / How many ILP units?)..." 
-              class="flex-1 px-4 py-2.5 text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-lnBlue focus:border-transparent transition"
+              class="flex-1 px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-lnBlue focus:border-transparent transition"
               autocomplete="off"
             />
             <button 
               type="submit" 
-              class="px-5 py-2.5 bg-lnBlue hover:bg-lnBlueHover text-white rounded-xl text-sm font-medium shadow-sm transition flex items-center gap-1.5"
+              class="px-3.5 sm:px-5 py-2 sm:py-2.5 bg-lnBlue hover:bg-lnBlueHover text-white rounded-xl text-xs sm:text-sm font-medium shadow-sm transition flex items-center gap-1 shrink-0 cursor-pointer"
             >
               <span data-i18n="btn_send">Send</span>
-              <i data-lucide="send" class="w-4 h-4"></i>
+              <i data-lucide="send" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
             </button>
           </form>
+          <div class="mt-1 text-center text-[10px] text-slate-400 truncate">
+            <span data-i18n="footer_sub">Model: Google Gemini 3.1 Flash Lite (Free Quota) · Hosted on GitHub Pages ($0 Cost)</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- 2. OFFICIAL KNOWLEDGE BASE SECTION -->
-    <section id="tab-kb" class="tab-content hidden">
-      <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-        <div class="flex flex-wrap items-center justify-between gap-4">
+    <!-- 2. OFFICIAL KNOWLEDGE BASE SECTION: Internally scrollable -->
+    <section id="tab-kb" class="tab-content hidden flex-1 min-h-0 overflow-y-auto p-1 sm:p-2">
+      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 class="text-xl font-bold text-lnBlue flex items-center gap-2">
-              <i data-lucide="database" class="w-6 h-6 text-lnGold"></i>
+            <h2 class="text-base sm:text-lg font-bold text-lnBlue flex items-center gap-2">
+              <i data-lucide="database" class="w-5 h-5 text-lnGold"></i>
               <span data-i18n="kb_title">Official Lingnan Knowledge Base Sources</span>
             </h2>
-            <p class="text-xs sm:text-sm text-slate-600 mt-1" data-i18n="kb_desc">
+            <p class="text-xs text-slate-600 mt-1" data-i18n="kb_desc">
               All assistant answers are strictly grounded in these 11 verified official pages to eliminate AI hallucinations.
             </p>
           </div>
-          <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-xs rounded-full font-medium" data-i18n="kb_badge">
+          <span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 text-[11px] rounded-full font-medium" data-i18n="kb_badge">
             All 11 sources officially verified (HTTP 200)
           </span>
         </div>
@@ -167,12 +170,12 @@
           <table class="w-full text-left text-xs border border-slate-200 rounded-xl overflow-hidden">
             <thead class="bg-slate-100 text-slate-700 uppercase font-semibold">
               <tr>
-                <th class="p-3" data-i18n="th_id">ID</th>
-                <th class="p-3" data-i18n="th_cat">Category</th>
-                <th class="p-3" data-i18n="th_title">Official Page / Document</th>
-                <th class="p-3" data-i18n="th_summary">Regulations Summary</th>
-                <th class="p-3 whitespace-nowrap" data-i18n="th_date">Retrieved Date</th>
-                <th class="p-3" data-i18n="th_status">Status</th>
+                <th class="p-2.5" data-i18n="th_id">ID</th>
+                <th class="p-2.5" data-i18n="th_cat">Category</th>
+                <th class="p-2.5" data-i18n="th_title">Official Page / Document</th>
+                <th class="p-2.5" data-i18n="th_summary">Regulations Summary</th>
+                <th class="p-2.5 whitespace-nowrap" data-i18n="th_date">Retrieved Date</th>
+                <th class="p-2.5" data-i18n="th_status">Status</th>
               </tr>
             </thead>
             <tbody id="kb-table-body" class="divide-y divide-slate-200">
@@ -183,26 +186,26 @@
       </div>
     </section>
 
-    <!-- 3. ONE-PAGE WORKING PRINCIPLE SECTION -->
-    <section id="tab-workflow" class="tab-content hidden">
-      <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+    <!-- 3. ONE-PAGE WORKFLOW ARCHITECTURE SECTION: Internally scrollable -->
+    <section id="tab-workflow" class="tab-content hidden flex-1 min-h-0 overflow-y-auto p-1 sm:p-2">
+      <div class="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
         <div>
-          <h2 class="text-xl font-bold text-lnBlue flex items-center gap-2">
-            <i data-lucide="git-branch" class="w-6 h-6 text-lnGold"></i>
+          <h2 class="text-base sm:text-lg font-bold text-lnBlue flex items-center gap-2">
+            <i data-lucide="git-branch" class="w-5 h-5 text-lnGold"></i>
             <span data-i18n="wf_title">One-Page Architecture: RAG Workflow Pipeline</span>
           </h2>
-          <p class="text-xs sm:text-sm text-slate-600 mt-1" data-i18n="wf_desc">
+          <p class="text-xs text-slate-600 mt-1" data-i18n="wf_desc">
             Why not plain LLMs? General models hallucinate outdated dates and rules. Our system uses closed-book RAG to ensure every answer is grounded in official university documents.
           </p>
         </div>
 
         <!-- 8-Step Visual Pipeline -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 my-6" id="workflow-cards">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 my-4" id="workflow-cards">
           <!-- Rendered dynamically by app.js based on language -->
         </div>
 
         <!-- Key Features Overview -->
-        <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
+        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-2">
           <div class="font-bold text-slate-900 text-sm" data-i18n="wf_specs_title">Technical Specs & Project Commitments:</div>
           <p data-i18n="wf_specs_1">• <b>Zero-Cost Operation ($0 Cost)</b>: Powered by Google Gemini Free Quota and hosted on GitHub Pages free CDN.</p>
           <p data-i18n="wf_specs_2">• <b>Strict Anti-Hallucination</b>: Questions missing from official records are honestly declined and redirected to designated offices.</p>
@@ -213,17 +216,9 @@
 
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-slate-900 text-slate-400 py-5 border-t border-slate-800 text-xs">
-    <div class="max-w-6xl mx-auto px-4 text-center space-y-1">
-      <p data-i18n="footer_title">Lingnan University · CCC8015 Generative AI Project Showcase</p>
-      <p class="text-slate-500" data-i18n="footer_sub">Model: Google Gemini 3.1 Flash Lite (Free Quota) · Hosted on GitHub Pages ($0 Cost)</p>
-    </div>
-  </footer>
-
   <!-- Scripts with cache busting -->
-  <script src="js/data.js?v=2.2"></script>
-  <script src="js/bot-engine.js?v=2.2"></script>
-  <script src="js/app.js?v=2.2"></script>
+  <script src="js/data.js?v=2.4"></script>
+  <script src="js/bot-engine.js?v=2.4"></script>
+  <script src="js/app.js?v=2.4"></script>
 </body>
 </html>
