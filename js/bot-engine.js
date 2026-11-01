@@ -17,16 +17,41 @@ class LingnanBotEngine {
     this.history = [];
   }
 
-  async processQuery(userInput, lang = "zh") {
+  detectQueryLanguage(text, defaultLang = "en") {
+    if (!text) return defaultLang;
+    const hasChinese = /[\u4e00-\u9fa5]/.test(text);
+    const latinLetters = (text.match(/[a-zA-Z]/g) || []).length;
+    const chineseChars = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+
+    // If query has Latin letters and NO Chinese characters, it is 100% English
+    if (latinLetters > 0 && !hasChinese) {
+      return "en";
+    }
+    // If predominantly English words
+    if (latinLetters > 5 && latinLetters > chineseChars * 2) {
+      return "en";
+    }
+    // If predominantly Chinese
+    if (hasChinese && chineseChars >= latinLetters) {
+      return "zh";
+    }
+    return defaultLang;
+  }
+
+  async processQuery(userInput, lang = "en") {
     const query = userInput.trim();
     if (!query) return null;
 
+    // Detect language: Ask in English MUST reply in English
+    const detectedLang = this.detectQueryLanguage(query, lang);
+    const effectiveLang = (lang === "en" || detectedLang === "en") ? "en" : detectedLang;
+
     try {
-      const response = await this.callGeminiFlashLite(query, lang);
+      const response = await this.callGeminiFlashLite(query, effectiveLang);
       return response;
     } catch (err) {
       console.warn("Gemini API call failed, falling back to local grounded knowledge:", err);
-      return this.fallbackLocalGroundedAnswer(query, lang);
+      return this.fallbackLocalGroundedAnswer(query, effectiveLang);
     }
   }
 
@@ -35,8 +60,8 @@ class LingnanBotEngine {
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${this.modelName}:generateContent?key=${this.defaultApiKey}`;
 
     const langInstruction = lang === "en"
-      ? "You MUST answer in fluent, clear ENGLISH following the 4-part structure."
-      : "請以親切專業的香港繁體中文回答，嚴格遵守四段輸出格式。";
+      ? "MANDATORY RULE: The user asked in ENGLISH. You MUST answer 100% in fluent, professional ENGLISH. Do NOT output any Chinese text."
+      : "重要規則：若用戶問題為英文，必須以英文作答；若為中文，請以親切專業的香港繁體中文回答，嚴格遵守四段輸出格式。";
 
     const payload = {
       contents: [
@@ -99,11 +124,12 @@ ${kbContext}
 
 CRITICAL RULES:
 1. Answer ONLY using the official knowledge base above. Never invent dates, credits, numbers, or rules.
-2. If ambiguous (e.g. asking to swap hostel room without specifying student type or term), ask ONE short clarifying question first.
-3. If out of scope (homework/assignments, weather forecast, stock prices), politely refuse.
-4. If missing knowledge (e.g. canteen closing time tonight), honestly state you cannot find it in official records and suggest checking official campus catering notices or OSA.
-5. Language: You MUST reply in clear, natural ENGLISH. Explain jargon (CRN, ILP, CGPA, add/drop) simply when first used.
-6. STRICT OUTPUT FORMAT:
+2. MANDATORY LANGUAGE RULE: When the user asks in English, you MUST reply 100% in fluent, natural ENGLISH. Never switch to Chinese unless explicitly requested.
+3. If ambiguous (e.g. asking to swap hostel room without specifying student type or term), ask ONE short clarifying question first.
+4. If out of scope (homework/assignments, weather forecast, stock prices), politely refuse.
+5. If missing knowledge (e.g. canteen closing time tonight), honestly state you cannot find it in official records and suggest checking official campus catering notices or OSA.
+6. Explain acronyms (CRN, ILP, CGPA, Add/Drop) simply when first used.
+7. STRICT 4-PART OUTPUT FORMAT:
 Short answer (1-2 lines)
 Explanation bullets (- bullet 1, - bullet 2, - bullet 3)
 Source: [Official page URL or title]
@@ -120,15 +146,11 @@ ${kbContext}
 
 重要回答守則 (Critical Rules)：
 1. 嚴格根據上述官方知識庫作答。不可捏造日期、學分上限、學費或規章。
-2. 若用戶問題含糊（例如問「換房」未註明學期或新生/舊生），請先主動禮貌反問澄清。
-3. 若超出服務範圍（例如要求代寫作業功課、詢問天氣、買機票等），請禮貌拒絕並說明服務範圍。
-4. 若知識庫無該資訊（例如學生村飯堂今晚幾點收工），請誠實說明資料庫無即時每日營業通告，並引導至學生事務處 (OSA) 或餐飲委員會通告。
-5. 語言：請使用親切易懂的香港繁體中文，並以一句話簡明解釋術語（如 CRN, ILP, CGPA, Add/Drop）。
-6. 回答格式：
-- 先給予 1-2 句精簡結論 (Short Answer)
-- 列點詳細解釋 (Explanation Bullets)
-- 註明官方出處 (Source)
-- 下一步具體建議 (Next Step)
+2. 語言一致性守則 (MANDATORY LANGUAGE RULE)：若用戶以英文提問（Ask in English），必須 100% 以清晰流利的英文回答（MUST reply in English）。絕不可用中文回答英文提問！只有當用戶以中文提問時才以繁體中文作答。
+3. 若用戶問題含糊（例如問「換房」未註明學期或新生/舊生），請先主動禮貌反問澄清。
+4. 若超出服務範圍（例如要求代寫作業功課、詢問天氣、買機票等），請禮貌拒絕並說明服務範圍。
+5. 若知識庫無該資訊（例如學生村飯堂今晚幾點收工），請誠實說明資料庫無即時每日營業通告，並引導至學生事務處 (OSA) 或餐飲委員會通告。
+6. 語言與格式：請以簡明清晰的四段格式回答（短答、條列解釋、官方來源、下一步指引）。
 `;
   }
 
