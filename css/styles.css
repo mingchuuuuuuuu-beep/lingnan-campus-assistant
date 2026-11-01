@@ -1,0 +1,80 @@
+:root {
+  --ln-blue: #002D62;
+  --ln-blue-light: #0A3D78;
+  --ln-gold: #C59B27;
+  --ln-gold-light: #FBF4E4;
+  --ln-bg: #F8FAFC;
+  --ln-card: #FFFFFF;
+  --ln-text: #1E293B;
+  --ln-muted: #64748B;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+  background-color: var(--ln-bg);
+  color: var(--ln-text);
+  margin: 0;
+  padding: 0;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Active tab style */
+.tab-btn.active {
+  background-color: var(--ln-blue);
+  color: #ffffff;
+  border-color: var(--ln-blue);
+}
+
+/* Chat bubble styling */
+.chat-bubble-user {
+  background: linear-gradient(135deg, #002D62 0%, #0d4486 100%);
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-bubble-bot {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/* Pipeline node badge */
+.node-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-weight: 500;
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+}
+
+/* Source Citation Box */
+.source-box {
+  background-color: #f8fafc;
+  border-left: 3px solid var(--ln-gold);
+}
+
+/* Code block / raw display */
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
