@@ -47,14 +47,22 @@
           </div>
         </div>
 
-        <!-- Prominent Language Selector (Default: EN) -->
-        <div class="flex items-center bg-slate-900/95 px-1.5 py-0.5 sm:py-1 rounded-xl border border-lnGold shadow shrink-0">
-          <span class="text-xs text-yellow-300 font-bold px-1 sm:px-1.5 flex items-center gap-1">
-            <i data-lucide="globe" class="w-3.5 h-3.5 text-lnGold"></i>
-            <span class="text-[11px] hidden sm:inline">Lang:</span>
-          </span>
-          <button id="lang-btn-en" class="lang-btn px-2 sm:px-2.5 py-0.5 rounded-lg font-bold text-xs bg-lnGold text-lnBlue shadow transition cursor-pointer">EN</button>
-          <button id="lang-btn-zh" class="lang-btn px-2 sm:px-2.5 py-0.5 rounded-lg font-medium text-xs text-slate-300 hover:text-white transition cursor-pointer">中文</button>
+        <!-- Controls: Key Settings & Prominent Language Selector -->
+        <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+          <button id="key-modal-open-btn" class="flex items-center gap-1 bg-slate-900/90 hover:bg-slate-800 text-yellow-300 px-2 py-1 rounded-xl border border-lnGold shadow transition text-xs cursor-pointer" title="API Key Settings & Security">
+            <i data-lucide="key" class="w-3.5 h-3.5 text-lnGold"></i>
+            <span class="text-[11px] font-medium hidden sm:inline" data-i18n="nav_key_btn">API Key</span>
+          </button>
+
+          <!-- Prominent Language Selector (Default: EN) -->
+          <div class="flex items-center bg-slate-900/95 px-1.5 py-0.5 sm:py-1 rounded-xl border border-lnGold shadow shrink-0">
+            <span class="text-xs text-yellow-300 font-bold px-1 sm:px-1.5 flex items-center gap-1">
+              <i data-lucide="globe" class="w-3.5 h-3.5 text-lnGold"></i>
+              <span class="text-[11px] hidden sm:inline">Lang:</span>
+            </span>
+            <button id="lang-btn-en" class="lang-btn px-2 sm:px-2.5 py-0.5 rounded-lg font-bold text-xs bg-lnGold text-lnBlue shadow transition cursor-pointer">EN</button>
+            <button id="lang-btn-zh" class="lang-btn px-2 sm:px-2.5 py-0.5 rounded-lg font-medium text-xs text-slate-300 hover:text-white transition cursor-pointer">中文</button>
+          </div>
         </div>
       </div>
 
@@ -211,14 +219,91 @@
           <p data-i18n="wf_specs_2">• <b>Strict Anti-Hallucination</b>: Questions missing from official records are honestly declined and redirected to designated offices.</p>
           <p data-i18n="wf_specs_3">• <b>Disclaimer</b>: This is a CCC8015 student project prototype, not official university staff. Confirm important decisions with Registry/OSA.</p>
         </div>
+
+        <!-- Security & Architecture Trade-off (Addressing Client-Side Key Management) -->
+        <div class="p-4 bg-amber-50/70 rounded-xl border border-amber-200 text-xs space-y-2">
+          <div class="font-bold text-amber-950 text-sm flex items-center gap-1.5">
+            <i data-lucide="shield-alert" class="w-4 h-4 text-amber-700"></i>
+            <span data-i18n="wf_sec_title">Security & Architecture Trade-off (Key Management):</span>
+          </div>
+          <p class="text-amber-900" data-i18n="wf_sec_1">• <b>Client-Side Static Hosting Trade-off</b>: A zero-cost GitHub Pages app cannot hide keys behind server environment variables. The primary defense is Google Cloud <b>HTTP Referrer Restriction</b> (authorized only for <code>https://mingchuuuuuuuu-beep.github.io/*</code>).</p>
+          <p class="text-amber-900" data-i18n="wf_sec_2">• <b>Demo Key Rotation Lifecycle</b>: The demo key uses free-tier quota (no credit card bound) and is scheduled for immediate revocation and regeneration in Google AI Studio following the presentation.</p>
+          <p class="text-amber-900" data-i18n="wf_sec_3">• <b>Production Security Roadmap</b>: Full commercial deployment will introduce a lightweight serverless reverse proxy (e.g. Cloudflare Workers or Supabase Edge Functions) to store keys securely in server environment secrets.</p>
+        </div>
       </div>
     </section>
 
   </main>
 
+  <!-- API Key & Security Modal -->
+  <div id="key-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+    <div class="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+            <i data-lucide="key" class="w-4 h-4 text-amber-600"></i>
+          </div>
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900" data-i18n="modal_key_title">API Key Settings</h3>
+            <p class="text-[11px] text-slate-500" data-i18n="modal_key_subtitle">Manage Google Gemini API Key</p>
+          </div>
+        </div>
+        <button id="key-modal-close-btn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Current Key Status -->
+      <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1">
+        <div class="text-slate-500 font-medium" data-i18n="modal_key_status_label">Current Status:</div>
+        <div id="key-status-text" class="font-mono text-emerald-700 font-bold flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span data-i18n="modal_key_status_default">Using Default Demo Key (Free Quota)</span>
+        </div>
+      </div>
+
+      <!-- Custom Key Input -->
+      <div class="space-y-1.5">
+        <label class="block text-xs font-semibold text-slate-700" data-i18n="modal_key_input_label">
+          Custom Gemini API Key (Optional):
+        </label>
+        <input 
+          type="password" 
+          id="custom-key-input" 
+          placeholder="AIzaSy... (leave blank to use default demo key)" 
+          class="w-full px-3 py-2 text-xs rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-lnBlue font-mono"
+        />
+        <p class="text-[11px] text-slate-500 leading-normal" data-i18n="modal_key_hint">
+          Saved only in your browser local storage. Never sent to third parties.
+        </p>
+      </div>
+
+      <!-- Security Notice -->
+      <div class="p-3 bg-blue-50/70 rounded-xl border border-blue-200 text-[11px] text-blue-900 space-y-1">
+        <div class="font-bold flex items-center gap-1">
+          <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-blue-700"></i>
+          <span data-i18n="modal_sec_title">Security & Referrer Restrictions</span>
+        </div>
+        <p data-i18n="modal_sec_text">
+          In public static hosting, restrict your key in Google Cloud Console to HTTP Referrer <code>https://mingchuuuuuuuu-beep.github.io/*</code>. Rotate or delete after presentations.
+        </p>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button id="clear-custom-key-btn" class="px-3 py-1.5 text-xs text-rose-600 hover:bg-rose-50 rounded-xl transition cursor-pointer font-medium" data-i18n="btn_reset_key">
+          Reset to Default
+        </button>
+        <button id="save-custom-key-btn" class="px-4 py-1.5 bg-lnBlue hover:bg-lnBlueHover text-white text-xs font-medium rounded-xl transition cursor-pointer shadow-xs" data-i18n="btn_save_key">
+          Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Scripts with cache busting -->
-  <script src="js/data.js?v=2.6"></script>
-  <script src="js/bot-engine.js?v=2.6"></script>
-  <script src="js/app.js?v=2.6"></script>
+  <script src="js/data.js?v=2.7"></script>
+  <script src="js/bot-engine.js?v=2.7"></script>
+  <script src="js/app.js?v=2.7"></script>
 </body>
 </html>

@@ -23,6 +23,14 @@
      - **成本**：$0 HKD。
      - 計劃書 Section 4.1 首選。Dify 註冊即送免費 Sandbox 呼叫額度，點擊網頁上「切換至 Dify 內嵌 (iframe)」即可無縫切換。
 
+3. **金鑰安全性與架構權衡 (Security, Key Management & Quota Guard)**
+   - **靜態架構之安全性考量**：在 GitHub Pages 純前端靜態託管（$0 成本）架構下，客戶端直接發起 LLM 請求需攜帶 API Key。
+   - **防護措施 (Security Mitigations)**：
+     - **Google Cloud HTTP Referrer 網域限制**：在 Google Cloud Console 中將該金鑰限制僅能由 `https://mingchuuuuuuuu-beep.github.io/*` 呼叫。未經授權之網站、本機或 Postman/curl 嘗試盜用均會被 Google API 閘道拒絕 (`403 Forbidden`)。
+     - **金鑰生命週期管理 (Key Rotation)**：課堂展示期使用免綁卡 Free Tier 金鑰，展示結束後於 Google AI Studio 立即註銷作廢。
+     - **UI 自訂金鑰與離線備援雙軌**：介面提供 `API Key` 設定彈窗（儲存於個人 LocalStorage），且具備離線 Grounded RAG 備援，即使額度用盡亦保證 100% 穩定作答。
+   - **商業生產環境升級建議 (Production Roadmap)**：未來上線時導入輕量反向代理（如 Cloudflare Workers 或 Supabase Edge Functions）作為安全閘道，金鑰存放於後端環境變數 (Secrets)，徹底隔離前端。
+
 ---
 
 ## 二、 網頁架構與章節映射 (Page Structure & Plan Mapping)

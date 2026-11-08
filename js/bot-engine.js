@@ -13,6 +13,31 @@ class LingnanBotEngine {
     this.modelName = "gemini-3.1-flash-lite";
   }
 
+  getApiKey() {
+    const custom = typeof localStorage !== "undefined" ? localStorage.getItem("lingnan_custom_api_key") : "";
+    return (custom && custom.trim().length > 0) ? custom.trim() : this.defaultApiKey;
+  }
+
+  hasCustomKey() {
+    const custom = typeof localStorage !== "undefined" ? localStorage.getItem("lingnan_custom_api_key") : "";
+    return !!(custom && custom.trim().length > 0);
+  }
+
+  setCustomApiKey(key) {
+    if (typeof localStorage === "undefined") return;
+    if (key && key.trim()) {
+      localStorage.setItem("lingnan_custom_api_key", key.trim());
+    } else {
+      localStorage.removeItem("lingnan_custom_api_key");
+    }
+  }
+
+  clearCustomApiKey() {
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem("lingnan_custom_api_key");
+    }
+  }
+
   reset() {
     this.history = [];
   }
@@ -57,7 +82,8 @@ class LingnanBotEngine {
 
   async callGeminiFlashLite(userInput, lang) {
     const systemPrompt = this.buildRAGSystemPrompt(lang);
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${this.modelName}:generateContent?key=${this.defaultApiKey}`;
+    const activeApiKey = this.getApiKey();
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${this.modelName}:generateContent?key=${activeApiKey}`;
 
     const langInstruction = lang === "en"
       ? "MANDATORY RULE: The user asked in ENGLISH. You MUST answer 100% in fluent, professional ENGLISH. Do NOT output any Chinese text."

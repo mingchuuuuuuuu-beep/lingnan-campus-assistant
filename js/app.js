@@ -45,7 +45,23 @@ const I18N = {
     welcome_box_4: "📌 兆康站步行、機場口岸抵校交通",
     welcome_hint: "💡 你可以直接點擊上方快捷問題，或者在下方輸入框隨意發問！",
     typing_text: "Gemini 3.1 Flash Lite 正在生成思考...",
-    verification_label: "資訊驗證："
+    verification_label: "資訊驗證：",
+    nav_key_btn: "API Key",
+    modal_key_title: "API Key 設定與安全性管理",
+    modal_key_subtitle: "Google Gemini 3.1 Flash Lite 金鑰管理",
+    modal_key_status_label: "當前金鑰來源：",
+    modal_key_status_default: "使用預設展示金鑰 (Free Quota)",
+    modal_key_status_custom: "使用自訂個人 API Key (已安全保存在本地)",
+    modal_key_input_label: "輸入個人 Gemini API Key (可選)：",
+    modal_key_hint: "金鑰僅存於你的個人瀏覽器本地 (LocalStorage)，重新整理不遺失，絕不上傳後端伺服器。",
+    modal_sec_title: "靜態網站安全性與防盜建議",
+    modal_sec_text: "因 GitHub Pages 為純前端靜態託管，金鑰建議於 Google Cloud Console 設定「HTTP Referrer 限制」為 <code>https://mingchuuuuuuuu-beep.github.io/*</code>，防止他人盜用，並於報告後銷毀更換。",
+    btn_reset_key: "清除自訂金鑰 (用回預設)",
+    btn_save_key: "儲存設定",
+    wf_sec_title: "安全性與架構權衡 (Security & Key Management)：",
+    wf_sec_1: "• <b>純前端靜態架構限制</b>：GitHub Pages 靜態網站無法透過伺服器環境變數完全隱藏金鑰。防護策略為在 Google Cloud Console 將金鑰設定「HTTP Referrers 白名單限制」（僅允許 <code>https://mingchuuuuuuuu-beep.github.io/*</code> 呼叫）。",
+    wf_sec_2: "• <b>展示期生命週期管理 (Key Rotation)</b>：課堂展示期使用免綁卡 Free Tier 金鑰，展示完畢後於 Google AI Studio 立即刪除作廢並重新發行。",
+    wf_sec_3: "• <b>商用生產環境升級建議</b>：正式上線應引入輕量反向代理（如 Cloudflare Workers 或 Supabase Edge Functions）作為安全閘道，將金鑰保存在後端環境變數 (Secrets)。"
   },
   en: {
     app_title: "Lingnan Campus Assistant",
@@ -85,7 +101,23 @@ const I18N = {
     welcome_box_4: "📌 Transport from Siu Hong MTR, airport & borders",
     welcome_hint: "💡 Click any quick shortcut above or type your question below in English or Chinese!",
     typing_text: "Gemini 3.1 Flash Lite is reasoning...",
-    verification_label: "Grounding Verification: "
+    verification_label: "Grounding Verification: ",
+    nav_key_btn: "API Key",
+    modal_key_title: "API Key Settings & Security",
+    modal_key_subtitle: "Google Gemini 3.1 Flash Lite Key Management",
+    modal_key_status_label: "Current Key Source:",
+    modal_key_status_default: "Using Default Demo Key (Free Quota)",
+    modal_key_status_custom: "Using Custom API Key (Saved in Local Storage)",
+    modal_key_input_label: "Enter Custom Gemini API Key (Optional):",
+    modal_key_hint: "The key is saved only in your local browser (LocalStorage) and is never transmitted to any third-party server.",
+    modal_sec_title: "Static Hosting Security & Referrer Restriction",
+    modal_sec_text: "Because GitHub Pages is a purely client-side static site, restrict your key in Google Cloud Console with HTTP Referrer restriction to <code>https://mingchuuuuuuuu-beep.github.io/*</code> to prevent external theft. Rotate or delete the key after presentations.",
+    btn_reset_key: "Reset to Default",
+    btn_save_key: "Save Key",
+    wf_sec_title: "Security & Architecture Trade-off (Key Management):",
+    wf_sec_1: "• <b>Client-Side Static Hosting Trade-off</b>: A zero-cost GitHub Pages app cannot hide keys behind server environment variables. The primary defense is Google Cloud <b>HTTP Referrer Restriction</b> (authorized only for <code>https://mingchuuuuuuuu-beep.github.io/*</code>).",
+    wf_sec_2: "• <b>Demo Key Rotation Lifecycle</b>: The demo key uses free-tier quota (no credit card bound) and is scheduled for immediate revocation and regeneration in Google AI Studio following the presentation.",
+    wf_sec_3: "• <b>Production Security Roadmap</b>: Full commercial deployment will introduce a lightweight serverless reverse proxy (e.g. Cloudflare Workers or Supabase Edge Functions) to store keys securely in server environment secrets."
   }
 };
 
@@ -114,10 +146,78 @@ const WORKFLOW_STEPS = {
 
 document.addEventListener("DOMContentLoaded", () => {
   initLanguageSwitcher();
+  initKeyModal();
   initTabNavigation();
   setLanguage(currentLang);
   initChatLogic();
 });
+
+// Initialize API Key Modal
+function initKeyModal() {
+  const modal = document.getElementById("key-modal");
+  const openBtn = document.getElementById("key-modal-open-btn");
+  const closeBtn = document.getElementById("key-modal-close-btn");
+  const saveBtn = document.getElementById("save-custom-key-btn");
+  const clearBtn = document.getElementById("clear-custom-key-btn");
+  const input = document.getElementById("custom-key-input");
+  const statusEl = document.getElementById("key-status-text");
+
+  if (!modal || !openBtn) return;
+
+  function updateStatusDisplay() {
+    if (!statusEl) return;
+    const dict = I18N[currentLang] || I18N.zh;
+    if (window.lingnanBot && window.lingnanBot.hasCustomKey()) {
+      statusEl.className = "font-mono text-blue-700 font-bold flex items-center gap-1.5";
+      statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-blue-500"></span><span>${dict.modal_key_status_custom}</span>`;
+      if (input) input.value = localStorage.getItem("lingnan_custom_api_key") || "";
+    } else {
+      statusEl.className = "font-mono text-emerald-700 font-bold flex items-center gap-1.5";
+      statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>${dict.modal_key_status_default}</span>`;
+      if (input) input.value = "";
+    }
+  }
+
+  openBtn.addEventListener("click", () => {
+    updateStatusDisplay();
+    modal.classList.remove("hidden");
+    if (window.lucide) window.lucide.createIcons();
+  });
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
+      modal.classList.add("hidden");
+    });
+  }
+
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) modal.classList.add("hidden");
+  });
+
+  if (saveBtn) {
+    saveBtn.addEventListener("click", () => {
+      const val = input.value.trim();
+      if (val) {
+        window.lingnanBot.setCustomApiKey(val);
+        alert(currentLang === "en" ? "Custom Gemini API Key saved successfully!" : "已成功保存自訂 Gemini API Key！");
+      } else {
+        window.lingnanBot.clearCustomApiKey();
+        alert(currentLang === "en" ? "Reverted to default demo key." : "已切換回預設展示金鑰。");
+      }
+      updateStatusDisplay();
+      modal.classList.add("hidden");
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      window.lingnanBot.clearCustomApiKey();
+      updateStatusDisplay();
+      alert(currentLang === "en" ? "Cleared custom key. Reverted to default demo key." : "已清除自訂金鑰，恢復預設展示金鑰。");
+      modal.classList.add("hidden");
+    });
+  }
+}
 
 // Initialize Language Switcher (zh / en)
 function initLanguageSwitcher() {
