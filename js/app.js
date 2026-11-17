@@ -1,51 +1,53 @@
 /**
  * Lingnan Campus Assistant (嶺南校園助手)
- * Streamlined UI Application Controller with zh/en Language Switching
+ * Upgraded UI Controller with Real-time Input Language Detection & Rich Markdown/Link Rendering
  */
 
-// Explicitly default to English ("en")
+// Default UI language is English ("en")
 let currentLang = localStorage.getItem("lingnan_lang_v3") || "en";
+let currentKbFilter = "ALL";
 
 const I18N = {
   zh: {
     app_title: "Lingnan Campus Assistant",
-    app_subtitle: "嶺南大學校園 AI 助手 (CCC8015 專題展示)",
+    app_subtitle: "嶺南大學校園 AI 助手 · 自動偵測中英雙語回答 (CCC8015 專題)",
     nav_chat: "智能對話",
     nav_kb: "官方知識庫",
     nav_workflow: "一頁運行原理",
-    chips_title: "常見問題快速點選 (Quick Questions)：",
-    chips_badge: "100% 真實大模型即時生成",
+    auto_lang_banner: "智能語系偵測：中文輸入 → 繁中回答 | 英文輸入 → 英文回答",
+    chips_title: "常見問題一鍵測試：",
     chat_box_title: "嶺南校園助手 (Lingnan Campus Assistant)",
-    chat_quota_badge: "免費額度 (Free Quota)",
-    btn_clear: "重置",
-    chat_placeholder: "輸入你的校園生活或學術問題（例如：兆康站點行去嶺大？/ ILP 畢業要幾多 unit？）...",
+    chat_lang_rule_pill: "中/EN 自動對應語言",
+    chat_quota_badge: "官方規章 RAG 核實",
+    btn_clear: "新對話",
+    chat_placeholder: "輸入中文或英文提問（中文輸入自動答中文 / Ask in EN for EN reply）...",
     btn_send: "發送",
+    input_rule_hint: "中文提問 → 繁體中文回答 · Ask in English → Reply in English",
     kb_title: "嶺南大學官方知識庫清單 (Official Knowledge Base)",
     kb_desc: "本助手的所有回答均以此 11 組已核實的官方頁面為事實依據（Ground Truth），杜絕 AI 幻覺。",
-    kb_badge: "全數 11 組來源經官方核實 (HTTP 200)",
+    kb_badge: "● 全數 11 組來源經官方核實 (HTTP 200)",
     th_id: "編號",
     th_cat: "類別",
-    th_title: "官方頁面名稱 / 文件",
+    th_title: "官方頁面名稱 / 文件連結",
     th_summary: "規章摘要",
-    th_date: "擷取日期",
+    th_date: "核實日期",
     th_status: "狀態",
     wf_title: "一頁運行原理：RAG 檢索增強生成架構",
-    wf_desc: "為什麼不用純 LLM？普通大模型會憑空捏造過時日期與規則。本系統採用 RAG (檢索增強生成)，確保每一次回答都經過官方來源核實。",
+    wf_desc: "為什麼不用純 LLM？普通大模型會憑空捏造過時日期與規則。本系統採用閉卷 RAG (檢索增強生成)，確保每一次回答都經過官方來源核實。",
     wf_specs_title: "技術指標與專案承諾：",
     wf_specs_1: "• <b>零成本運作 ($0 Cost)</b>：採用 Google Gemini 免費配額 (Free Quota) 與 GitHub Pages 免費 CDN 靜態託管。",
-    wf_specs_2: "• <b>嚴格防幻覺 (No Hallucination)</b>：知識庫無收錄的資訊誠實回覆不知，並引導至負責辦公室。",
+    wf_specs_2: "• <b>中英輸入自動識別與嚴格防幻覺</b>：中文提問 100% 回答繁體中文，英文提問 100% 回答英文；知識庫無收錄的資訊誠實拒答。",
     wf_specs_3: "• <b>免責聲明</b>：本系統為嶺南大學 CCC8015 生成式 AI 課堂專題展示，非官方職員，重要學業決定請以 Registry 及 OSA 為準。",
-    footer_title: "嶺南大學 · CCC8015 生成式人工智能 (Generative AI) 專題研究展示網站",
-    footer_sub: "模型：Google Gemini 3.1 Flash Lite (Free Quota) · 託管於 GitHub Pages ($0 成本)",
+    footer_sub: "模型：Google Gemini 3.1 Flash Lite · 11 份官方核實規章 ($0 成本)",
     welcome_title: "同學你好！我係「嶺南校園助手」👋",
-    welcome_desc: "我已連接 <b>Google Gemini 3.1 Flash Lite</b> 大模型，結合嶺南大學教務處 (Registry) 及學生事務處 (OSA) 官方知識庫，為你解答：",
-    welcome_box_1: "📌 選科、加退選、學分上限 (33分)",
-    welcome_box_2: "📌 綜合學習計劃 (75 ILP units)",
-    welcome_box_3: "📌 學生宿舍申請、換房手續",
-    welcome_box_4: "📌 兆康站步行、機場口岸抵校交通",
-    welcome_hint: "💡 你可以直接點擊上方快捷問題，或者在下方輸入框隨意發問！",
-    typing_text: "Gemini 3.1 Flash Lite 正在生成思考...",
-    verification_label: "資訊驗證：",
+    welcome_desc: "我已連接 <b>Google Gemini 3.1 Flash Lite</b> 及嶺南大學 11 份官方知識庫。<b>支援中英雙語自動識別</b>（輸入中文即回答繁體中文、輸入英文即回答英文），點擊下方卡片可立即測試：",
+    welcome_box_1: "📚 <b>選科與學分上限</b><br><span class='text-[11px] text-slate-500'>33 學分上限、加退選日期、CRN 錯誤</span>",
+    welcome_box_2: "🎓 <b>綜合學習計劃 (ILP)</b><br><span class='text-[11px] text-slate-500'>2026 入學 75 units 要求、出席率規範</span>",
+    welcome_box_3: "🏠 <b>學生宿舍申請與換房</b><br><span class='text-[11px] text-slate-500'>非本地生宿位保證、雙向換房手續</span>",
+    welcome_box_4: "🚇 <b>兆康站與口岸交通</b><br><span class='text-[11px] text-slate-500'>兆康 F 出口天橋、K51 巴士、機場路線</span>",
+    welcome_hint: "💡 點擊上方任一主題卡片或頂部快捷問題，或在下方輸入框用中文 / 英文隨意發問！",
+    typing_text: "正在檢索嶺大規章並生成回覆...",
+    verification_label: "官方來源核實：",
     nav_key_btn: "API Key",
     modal_key_title: "API Key 設定與安全性管理",
     modal_key_subtitle: "Google Gemini 3.1 Flash Lite 金鑰管理",
@@ -65,43 +67,44 @@ const I18N = {
   },
   en: {
     app_title: "Lingnan Campus Assistant",
-    app_subtitle: "Lingnan University Campus AI Assistant (CCC8015 Project)",
+    app_subtitle: "Lingnan University Campus AI Assistant · Bilingual Auto-Match (中 / EN)",
     nav_chat: "Chatbot",
     nav_kb: "Knowledge Base",
     nav_workflow: "One-Page Architecture",
-    chips_title: "Quick Question Shortcuts:",
-    chips_badge: "Real-time Generative AI",
+    auto_lang_banner: "Auto-Detect: 中文輸入 → 中文回答 | EN Input → EN Reply",
+    chips_title: "Quick Try:",
     chat_box_title: "Lingnan Campus Assistant",
-    chat_quota_badge: "Free Quota",
-    btn_clear: "Reset",
-    chat_placeholder: "Ask any campus or academic question (e.g. How to walk from Siu Hong? / How many ILP units?)...",
+    chat_lang_rule_pill: "中/EN Auto-Match",
+    chat_quota_badge: "Official RAG Grounded",
+    btn_clear: "New Chat",
+    chat_placeholder: "Type in English or 中文 (e.g. How to walk from Siu Hong? / 兆康站點去嶺大？)...",
     btn_send: "Send",
+    input_rule_hint: "中文提問 → 中文回答 · Ask in EN → Reply in EN",
     kb_title: "Official Lingnan Knowledge Base Sources",
     kb_desc: "All assistant answers are strictly grounded in these 11 verified official pages to eliminate AI hallucinations.",
-    kb_badge: "All 11 sources officially verified (HTTP 200)",
+    kb_badge: "● All 11 sources verified (HTTP 200)",
     th_id: "ID",
     th_cat: "Category",
     th_title: "Official Page / Document",
     th_summary: "Regulations Summary",
-    th_date: "Retrieved Date",
+    th_date: "Retrieved",
     th_status: "Status",
     wf_title: "One-Page Architecture: RAG Workflow Pipeline",
     wf_desc: "Why not plain LLMs? General models hallucinate outdated dates and rules. Our system uses closed-book RAG to ensure every answer is grounded in official university documents.",
     wf_specs_title: "Technical Specs & Project Commitments:",
     wf_specs_1: "• <b>Zero-Cost Operation ($0 Cost)</b>: Powered by Google Gemini Free Quota and hosted on GitHub Pages free CDN.",
-    wf_specs_2: "• <b>Strict Anti-Hallucination</b>: Questions missing from official records are honestly declined and redirected to designated offices.",
+    wf_specs_2: "• <b>Strict Anti-Hallucination & Auto-Language Matching</b>: Chinese queries are answered in Traditional Chinese; English queries are answered in English. Missing facts are honestly declined.",
     wf_specs_3: "• <b>Disclaimer</b>: This is a CCC8015 student project prototype, not official university staff. Confirm important decisions with Registry/OSA.",
-    footer_title: "Lingnan University · CCC8015 Generative AI Project Showcase",
-    footer_sub: "Model: Google Gemini 3.1 Flash Lite (Free Quota) · Hosted on GitHub Pages ($0 Cost)",
+    footer_sub: "Model: Google Gemini 3.1 Flash Lite · 11 Verified Official Sources ($0 Cost)",
     welcome_title: "Hello! I am your Lingnan Campus Assistant 👋",
-    welcome_desc: "Powered by <b>Google Gemini 3.1 Flash Lite</b> and grounded in official Registry & OSA knowledge bases, I can assist you with:",
-    welcome_box_1: "📌 Course registration, add/drop, 33-credit limit",
-    welcome_box_2: "📌 Integrated Learning Programme (75 ILP units)",
-    welcome_box_3: "📌 Student hostel application & room swapping",
-    welcome_box_4: "📌 Transport from Siu Hong MTR, airport & borders",
-    welcome_hint: "💡 Click any quick shortcut above or type your question below in English or Chinese!",
-    typing_text: "Gemini 3.1 Flash Lite is reasoning...",
-    verification_label: "Grounding Verification: ",
+    welcome_desc: "Powered by <b>Google Gemini 3.1 Flash Lite</b> and grounded in 11 official Registry & OSA documents. <b>Auto-detects your input language</b> (Ask in English → Reply in English; 輸入中文 → 回答繁體中文). Tap a topic below to try:",
+    welcome_box_1: "📚 <b>Courses & Credit Limits</b><br><span class='text-[11px] text-slate-500'>33-credit cap, Add/Drop dates, CRN errors</span>",
+    welcome_box_2: "🎓 <b>75 ILP Units (2026+)</b><br><span class='text-[11px] text-slate-500'>6 Core Domains, NSO units & attendance</span>",
+    welcome_box_3: "🏠 <b>Student Hostels & Swaps</b><br><span class='text-[11px] text-slate-500'>Non-local guarantee & mutual room swap</span>",
+    welcome_box_4: "🚇 <b>Siu Hong & Airport Routes</b><br><span class='text-[11px] text-slate-500'>Exit F footbridge, K51 bus & border arrivals</span>",
+    welcome_hint: "💡 Click any topic card above, use the quick shortcuts, or type below in English or Chinese!",
+    typing_text: "Retrieving official Lingnan regulations & generating reply...",
+    verification_label: "Official Source Verification: ",
     nav_key_btn: "API Key",
     modal_key_title: "API Key Settings & Security",
     modal_key_subtitle: "Google Gemini 3.1 Flash Lite Key Management",
@@ -123,24 +126,24 @@ const I18N = {
 
 const WORKFLOW_STEPS = {
   zh: [
-    { num: "①", title: "用戶輸入 (Input)", desc: "接收中英雙語或廣東話問題，提取核心查詢實體。" },
-    { num: "②", title: "安全守門 (Guard)", desc: "檢查提示詞攻擊 (Prompt Injection) 與作業代寫，防範安全漏洞。" },
-    { num: "③", title: "意圖分類 (Intent)", desc: "將問題劃分為選科 (Course)、ILP、宿舍、交通等領域。" },
-    { num: "④", title: "反問澄清 (Clarify)", desc: "若缺少必要條件（如換房未註明學期），主動反問一條問題。" },
-    { num: "⑤", title: "官方知識檢索 (Retrieve)", desc: "從 11 篇官方文件中檢索相關規章切片，作為精確上下文。" },
-    { num: "⑥", title: "大模型生成 (Generate)", desc: "由 <b>Gemini 3.1 Flash Lite</b> 結合檢索上下文即時生成答案。" },
-    { num: "⑦", title: "自檢校驗 (Self-check)", desc: "核對日期與數字是否存在於官方上下文，確保無幻覺。" },
-    { num: "⑧", title: "結構化輸出 (Output)", desc: "短答 → 條列解釋 → 官方來源連結 → 下一步指引。" }
+    { num: "①", title: "用戶輸入與語系偵測", desc: "即時偵測輸入為中文或英文，鎖定目標回答語言並提取查詢實體。" },
+    { num: "②", title: "安全守門 (Safety Guard)", desc: "攔截提示詞注入攻擊 (Prompt Injection) 與代寫功課請求。" },
+    { num: "③", title: "意圖分類 (Intent)", desc: "精準區分選科、ILP、宿舍、換房或抵校交通等獨立主題，不混淆上下文。" },
+    { num: "④", title: "反問澄清 (Clarifier)", desc: "若缺少必要條件（如換房未註明學期或對象），主動提出澄清問題。" },
+    { num: "⑤", title: "官方知識檢索 (Retrieve)", desc: "從 11 篇官方核實規章中檢索最高權重之條文切片 (Ground Truth)。" },
+    { num: "⑥", title: "大模型生成 (Generate)", desc: "由 <b>Gemini 3.1 Flash Lite</b> 根據檢索內容與指定語言生成回覆。" },
+    { num: "⑦", title: "防幻覺自檢 (Self-check)", desc: "核對學分、日期與規章編號，若知識庫無記載（如飯堂收工時間）誠實拒答。" },
+    { num: "⑧", title: "結構化輸出 (Output)", desc: "輸出：簡短結論 → 重點條列 → 可點擊官方連結 → 下一步行動建議。" }
   ],
   en: [
-    { num: "①", title: "User Input", desc: "Accepts English, Chinese, or mixed queries, parsing core query entities." },
-    { num: "②", title: "Safety Guard", desc: "Intercepts prompt injection attacks and homework-writing requests." },
-    { num: "③", title: "Intent Classifier", desc: "Classifies intent into Course, ILP, Hostel, Transport, or General." },
-    { num: "④", title: "Clarifier", desc: "If critical parameters are missing (e.g. room swap term), asks one clarifying question." },
-    { num: "⑤", title: "Official Retrieval", desc: "Retrieves top-k verified chunks from 11 official Lingnan documents." },
-    { num: "⑥", title: "LLM Generation", desc: "<b>Gemini 3.1 Flash Lite</b> synthesizes answers strictly from retrieved context." },
-    { num: "⑦", title: "Self-Check", desc: "Verifies numbers, dates, and terms against context to eliminate hallucination." },
-    { num: "⑧", title: "Structured Output", desc: "Outputs Short answer → Explanation bullets → Official source → Next step." }
+    { num: "①", title: "Input & Auto-Lang Detect", desc: "Detects Chinese vs. English input automatically to lock the output language." },
+    { num: "②", title: "Safety Guard", desc: "Intercepts prompt injection attacks and academic dishonesty requests." },
+    { num: "③", title: "Intent Disambiguation", desc: "Classifies into Course, ILP, Hostel, or Transport without cross-turn pollution." },
+    { num: "④", title: "Clarifier", desc: "Asks a clarifying question when critical parameters are missing (e.g. room swap)." },
+    { num: "⑤", title: "Official Retrieval", desc: "Retrieves highest-scoring verified chunks from 11 official Lingnan documents." },
+    { num: "⑥", title: "LLM Generation", desc: "<b>Gemini 3.1 Flash Lite</b> synthesizes answers strictly in the detected language." },
+    { num: "⑦", title: "Anti-Hallucination Check", desc: "Verifies numbers and dates against official context; declines unverified topics." },
+    { num: "⑧", title: "Structured Output", desc: "Outputs Short answer → Bullet points → Clickable official URL → Next step." }
   ]
 };
 
@@ -148,6 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initLanguageSwitcher();
   initKeyModal();
   initTabNavigation();
+  initKbFilter();
   setLanguage(currentLang);
   initChatLogic();
 });
@@ -185,9 +189,7 @@ function initKeyModal() {
   });
 
   if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      modal.classList.add("hidden");
-    });
+    closeBtn.addEventListener("click", () => modal.classList.add("hidden"));
   }
 
   modal.addEventListener("click", (e) => {
@@ -199,10 +201,8 @@ function initKeyModal() {
       const val = input.value.trim();
       if (val) {
         window.lingnanBot.setCustomApiKey(val);
-        alert(currentLang === "en" ? "Custom Gemini API Key saved successfully!" : "已成功保存自訂 Gemini API Key！");
       } else {
         window.lingnanBot.clearCustomApiKey();
-        alert(currentLang === "en" ? "Reverted to default demo key." : "已切換回預設展示金鑰。");
       }
       updateStatusDisplay();
       modal.classList.add("hidden");
@@ -213,7 +213,6 @@ function initKeyModal() {
     clearBtn.addEventListener("click", () => {
       window.lingnanBot.clearCustomApiKey();
       updateStatusDisplay();
-      alert(currentLang === "en" ? "Cleared custom key. Reverted to default demo key." : "已清除自訂金鑰，恢復預設展示金鑰。");
       modal.classList.add("hidden");
     });
   }
@@ -238,12 +237,12 @@ function setLanguage(lang) {
   const btnZh = document.getElementById("lang-btn-zh");
   const btnEn = document.getElementById("lang-btn-en");
   if (lang === "en") {
-    btnEn.className = "lang-btn px-3 py-1 rounded-lg font-bold text-xs bg-lnGold text-lnBlue shadow transition";
-    btnZh.className = "lang-btn px-3 py-1 rounded-lg font-medium text-xs text-slate-300 hover:text-white transition";
+    btnEn.className = "lang-btn px-2.5 py-0.5 rounded-lg font-bold text-xs bg-lnGold text-lnBlue shadow transition cursor-pointer";
+    btnZh.className = "lang-btn px-2.5 py-0.5 rounded-lg font-medium text-xs text-slate-300 hover:text-white transition cursor-pointer";
     document.documentElement.lang = "en";
   } else {
-    btnZh.className = "lang-btn px-3 py-1 rounded-lg font-bold text-xs bg-lnGold text-lnBlue shadow transition";
-    btnEn.className = "lang-btn px-3 py-1 rounded-lg font-medium text-xs text-slate-300 hover:text-white transition";
+    btnZh.className = "lang-btn px-2.5 py-0.5 rounded-lg font-bold text-xs bg-lnGold text-lnBlue shadow transition cursor-pointer";
+    btnEn.className = "lang-btn px-2.5 py-0.5 rounded-lg font-medium text-xs text-slate-300 hover:text-white transition cursor-pointer";
     document.documentElement.lang = "zh-HK";
   }
 
@@ -261,16 +260,9 @@ function setLanguage(lang) {
     input.placeholder = dict.chat_placeholder;
   }
 
-  // Render Language-specific Quick Question Chips
   renderQuickChips(lang);
-
-  // Render Knowledge Base Table
-  renderKnowledgeBase(lang);
-
-  // Render Workflow Steps
+  renderKnowledgeBase(lang, currentKbFilter);
   renderWorkflow(lang);
-
-  // Render Initial Welcome Message in Chat
   renderWelcomeMessage(lang);
 
   if (window.lucide) {
@@ -285,12 +277,11 @@ function renderQuickChips(lang) {
 
   const chips = window.LINGNAN_DATA.quickChips[lang] || window.LINGNAN_DATA.quickChips.zh;
   container.innerHTML = chips.map(chip => `
-    <button class="chip-btn px-3 py-1 bg-white hover:bg-amber-50 hover:border-lnGold hover:text-lnBlue border border-slate-200 rounded-lg text-xs whitespace-nowrap shrink-0 transition shadow-xs cursor-pointer flex items-center gap-1" data-query="${chip.query}">
+    <button class="chip-btn px-3 py-1 bg-slate-50 hover:bg-amber-50 hover:border-lnGold hover:text-lnBlue border border-slate-200 rounded-lg text-xs font-medium whitespace-nowrap shrink-0 transition shadow-2xs cursor-pointer flex items-center gap-1" data-query="${chip.query}">
       <span>${chip.label}</span>
     </button>
   `).join("");
 
-  // Re-bind quick chips click events
   const input = document.getElementById("user-input");
   const form = document.getElementById("chat-form");
   container.querySelectorAll(".chip-btn").forEach(chip => {
@@ -304,33 +295,55 @@ function renderQuickChips(lang) {
   });
 }
 
+// Knowledge Base Category Filter
+function initKbFilter() {
+  const filterBar = document.getElementById("kb-filter-bar");
+  if (!filterBar) return;
+
+  filterBar.querySelectorAll(".kb-filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      currentKbFilter = btn.getAttribute("data-filter") || "ALL";
+      filterBar.querySelectorAll(".kb-filter-btn").forEach(b => {
+        b.className = "kb-filter-btn px-3 py-1 rounded-lg text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200 transition cursor-pointer";
+      });
+      btn.className = "kb-filter-btn active px-3 py-1 rounded-lg text-xs font-semibold bg-lnBlue text-white transition cursor-pointer";
+      renderKnowledgeBase(currentLang, currentKbFilter);
+      if (window.lucide) window.lucide.createIcons();
+    });
+  });
+}
+
 // Render Knowledge Base
-function renderKnowledgeBase(lang) {
+function renderKnowledgeBase(lang, filterKey = "ALL") {
   const tbody = document.getElementById("kb-table-body");
   if (!tbody || !window.LINGNAN_DATA) return;
 
-  tbody.innerHTML = window.LINGNAN_DATA.knowledgeBase.map(item => {
+  const items = window.LINGNAN_DATA.knowledgeBase.filter(item =>
+    filterKey === "ALL" || item.filterKey === filterKey
+  );
+
+  tbody.innerHTML = items.map(item => {
     const category = lang === "en" ? (item.categoryEn || item.category) : item.category;
     const summary = lang === "en" ? (item.summaryEn || item.summary) : item.summary;
 
     return `
-      <tr class="hover:bg-slate-50/80 transition">
-        <td class="p-3 font-mono font-bold text-lnBlue">${item.id}</td>
-        <td class="p-3">
-          <span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+      <tr class="hover:bg-slate-50/90 transition">
+        <td class="p-2.5 font-mono font-bold text-lnBlue whitespace-nowrap">${item.id}</td>
+        <td class="p-2.5 whitespace-nowrap">
+          <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
             ${category}
           </span>
         </td>
-        <td class="p-3">
-          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="font-medium text-blue-600 hover:underline flex items-center gap-1">
-            ${item.title}
-            <i data-lucide="external-link" class="w-3 h-3 inline"></i>
+        <td class="p-2.5">
+          <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="font-semibold text-blue-600 hover:text-lnBlue hover:underline inline-flex items-center gap-1">
+            <span>${item.title}</span>
+            <i data-lucide="external-link" class="w-3 h-3 shrink-0"></i>
           </a>
         </td>
-        <td class="p-3 text-slate-600 max-w-xs">${summary}</td>
-        <td class="p-3 text-slate-500 whitespace-nowrap">${item.retrievedDate}</td>
-        <td class="p-3 whitespace-nowrap">
-          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+        <td class="p-2.5 text-slate-600 max-w-md">${summary}</td>
+        <td class="p-2.5 text-slate-500 font-mono whitespace-nowrap">${item.retrievedDate}</td>
+        <td class="p-2.5 whitespace-nowrap">
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
             ● ${item.status}
           </span>
         </td>
@@ -346,53 +359,78 @@ function renderWorkflow(lang) {
 
   const steps = WORKFLOW_STEPS[lang] || WORKFLOW_STEPS.zh;
   const colors = [
-    "border-blue-200 bg-blue-50/60 text-blue-800",
-    "border-indigo-200 bg-indigo-50/60 text-indigo-800",
-    "border-sky-200 bg-sky-50/60 text-sky-800",
-    "border-amber-200 bg-amber-50/60 text-amber-800",
-    "border-emerald-200 bg-emerald-50/60 text-emerald-800",
-    "border-teal-200 bg-teal-50/60 text-teal-800",
-    "border-purple-200 bg-purple-50/60 text-purple-800",
-    "border-lnBlue bg-blue-900 text-white"
+    "border-blue-200 bg-blue-50/60 text-blue-900",
+    "border-indigo-200 bg-indigo-50/60 text-indigo-900",
+    "border-sky-200 bg-sky-50/60 text-sky-900",
+    "border-amber-200 bg-amber-50/60 text-amber-900",
+    "border-emerald-200 bg-emerald-50/60 text-emerald-900",
+    "border-teal-200 bg-teal-50/60 text-teal-900",
+    "border-purple-200 bg-purple-50/60 text-purple-900",
+    "border-lnBlue bg-lnBlue text-white"
   ];
 
   container.innerHTML = steps.map((s, idx) => {
     const isLast = idx === steps.length - 1;
     return `
-      <div class="p-4 rounded-xl border ${colors[idx]}">
+      <div class="p-3.5 rounded-xl border ${colors[idx]} shadow-2xs">
         <div class="text-xs font-bold ${isLast ? 'text-yellow-300' : ''} mb-1">${s.num} ${s.title}</div>
-        <p class="text-xs ${isLast ? 'text-slate-200' : 'text-slate-600'}">${s.desc}</p>
+        <p class="text-xs ${isLast ? 'text-slate-200' : 'text-slate-600'} leading-relaxed">${s.desc}</p>
       </div>
     `;
   }).join("");
 }
 
-// Render Initial Chat Welcome Message
+// Render Initial Chat Welcome Message with Interactive Cards
 function renderWelcomeMessage(lang) {
   const container = document.getElementById("messages-container");
   if (!container) return;
 
-  // Only replace if messages container is fresh (has only 1 child)
   if (container.children.length <= 1) {
     const dict = I18N[lang] || I18N.zh;
+    const sampleQueries = lang === "en"
+      ? [
+          "I'm a Year-2 student. Can I take 18 credits in both Term 1 and Term 2, and when is Term 2 add/drop?",
+          "I entered in 2026 on a 4-year programme. How many ILP units do I need to graduate?",
+          "I am a non-local student, do I need to apply for hostel myself?",
+          "How do I get to Lingnan from Siu Hong MTR station?"
+        ]
+      : [
+          "二年級想 T1、T2 都修 18 學分得唔得？T2 幾時可以改科？",
+          "我 2026 入學四年制，ILP 畢業要幾多 unit？",
+          "我係非本地生，宿舍要唔要自己申請？",
+          "由兆康站點行去嶺南大學？"
+        ];
+
     container.innerHTML = `
-      <div class="flex items-start space-x-3">
-        <div class="w-8 h-8 rounded-full bg-lnBlue text-white flex items-center justify-center font-bold text-xs shrink-0 mt-1">
+      <div class="flex items-start space-x-3 msg-animate">
+        <div class="w-8 h-8 rounded-xl bg-lnBlue text-lnGold flex items-center justify-center font-extrabold text-xs shrink-0 mt-1 shadow-xs">
           AI
         </div>
         <div class="chat-bubble-bot p-4 rounded-2xl max-w-2xl text-sm leading-relaxed">
-          <p class="font-bold text-lnBlue mb-1">${dict.welcome_title}</p>
-          <p class="text-slate-600 mb-2">${dict.welcome_desc}</p>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 sm:gap-2 my-2 text-xs text-slate-600">
-            <div class="p-2 bg-slate-50 rounded-lg border border-slate-100">${dict.welcome_box_1}</div>
-            <div class="p-2 bg-slate-50 rounded-lg border border-slate-100">${dict.welcome_box_2}</div>
-            <div class="p-2 bg-slate-50 rounded-lg border border-slate-100">${dict.welcome_box_3}</div>
-            <div class="p-2 bg-slate-50 rounded-lg border border-slate-100">${dict.welcome_box_4}</div>
+          <p class="font-bold text-lnBlue text-base mb-1">${dict.welcome_title}</p>
+          <p class="text-slate-600 text-xs sm:text-sm mb-2.5">${dict.welcome_desc}</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 my-2 text-xs text-slate-700">
+            <button type="button" class="welcome-card-btn text-left p-2.5 bg-slate-50 hover:bg-amber-50/80 hover:border-lnGold rounded-xl border border-slate-200 transition cursor-pointer" data-sample="${sampleQueries[0]}">${dict.welcome_box_1}</button>
+            <button type="button" class="welcome-card-btn text-left p-2.5 bg-slate-50 hover:bg-amber-50/80 hover:border-lnGold rounded-xl border border-slate-200 transition cursor-pointer" data-sample="${sampleQueries[1]}">${dict.welcome_box_2}</button>
+            <button type="button" class="welcome-card-btn text-left p-2.5 bg-slate-50 hover:bg-amber-50/80 hover:border-lnGold rounded-xl border border-slate-200 transition cursor-pointer" data-sample="${sampleQueries[2]}">${dict.welcome_box_3}</button>
+            <button type="button" class="welcome-card-btn text-left p-2.5 bg-slate-50 hover:bg-amber-50/80 hover:border-lnGold rounded-xl border border-slate-200 transition cursor-pointer" data-sample="${sampleQueries[3]}">${dict.welcome_box_4}</button>
           </div>
-          <p class="text-xs text-slate-500 mt-2">${dict.welcome_hint}</p>
+          <p class="text-[11px] text-slate-500 mt-2">${dict.welcome_hint}</p>
         </div>
       </div>
     `;
+
+    const input = document.getElementById("user-input");
+    const form = document.getElementById("chat-form");
+    container.querySelectorAll(".welcome-card-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const q = btn.getAttribute("data-sample");
+        if (input && form && q) {
+          input.value = q;
+          form.dispatchEvent(new Event("submit"));
+        }
+      });
+    });
   }
 }
 
@@ -425,8 +463,29 @@ function initTabNavigation() {
 function initChatLogic() {
   const form = document.getElementById("chat-form");
   const input = document.getElementById("user-input");
+  const langIndicator = document.getElementById("input-lang-indicator");
   const messagesContainer = document.getElementById("messages-container");
   const clearBtn = document.getElementById("clear-chat-btn");
+
+  // Live Input Language Detection Indicator
+  if (input && langIndicator) {
+    input.addEventListener("input", () => {
+      const val = input.value.trim();
+      if (!val) {
+        langIndicator.textContent = "中 / EN";
+        langIndicator.className = "absolute right-2 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-500 border border-slate-200 pointer-events-none transition";
+        return;
+      }
+      const detected = window.lingnanBot.detectQueryLanguage(val, currentLang);
+      if (detected === "zh") {
+        langIndicator.textContent = "中文 → 答中文";
+        langIndicator.className = "absolute right-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 pointer-events-none transition";
+      } else {
+        langIndicator.textContent = "EN → EN Reply";
+        langIndicator.className = "absolute right-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-100 text-lnBlue border border-blue-300 pointer-events-none transition";
+      }
+    });
+  }
 
   clearBtn.addEventListener("click", () => {
     window.lingnanBot.reset();
@@ -440,27 +499,35 @@ function initChatLogic() {
     const userText = input.value.trim();
     if (!userText) return;
 
-    // 1. User Message
-    appendMessage("user", userText);
-    input.value = "";
+    // Detect query language strictly from userText
+    const queryLang = window.lingnanBot.detectQueryLanguage(userText, currentLang);
 
-    // 2. Typing Indicator
-    const typingId = appendTypingIndicator();
+    // 1. User Message
+    appendMessage("user", userText, queryLang);
+    input.value = "";
+    if (langIndicator) {
+      langIndicator.textContent = "中 / EN";
+      langIndicator.className = "absolute right-2 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-slate-100 text-slate-500 border border-slate-200 pointer-events-none transition";
+    }
+
+    // 2. Typing Indicator in matching language
+    const typingId = appendTypingIndicator(queryLang);
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
-    // 3. Process with Real Gemini 3.1 Flash Lite API passing currentLang
+    // 3. Process Query with Input-Matched Language
     try {
-      const result = await window.lingnanBot.processQuery(userText, currentLang);
+      const result = await window.lingnanBot.processQuery(userText, queryLang);
       removeTypingIndicator(typingId);
       appendBotMessage(result);
     } catch (err) {
       removeTypingIndicator(typingId);
       appendBotMessage({
-        model: currentLang === "en" ? "System Notification" : "系統通知",
-        content: currentLang === "en"
-          ? `Sorry, an error occurred while connecting to the AI model: ${err.message}. Please try again.`
+        lang: queryLang,
+        model: queryLang === "en" ? "System Notification" : "系統通知",
+        content: queryLang === "en"
+          ? `Sorry, an error occurred while connecting to the AI service: ${err.message}. Please try again.`
           : `抱歉，呼叫 AI 服務時發生錯誤：${err.message}。請稍後重試。`,
-        source: currentLang === "en" ? "System Error" : "系統錯誤提示"
+        source: queryLang === "en" ? "System Error" : "系統錯誤提示"
       });
     }
 
@@ -468,70 +535,96 @@ function initChatLogic() {
     if (window.lucide) window.lucide.createIcons();
   });
 
-  function appendMessage(sender, text) {
+  function appendMessage(sender, text, msgLang) {
     const div = document.createElement("div");
-    div.className = "flex items-start justify-end space-x-3";
+    div.className = "flex items-start justify-end space-x-2.5 msg-animate";
     div.innerHTML = `
-      <div class="chat-bubble-user px-4 py-2.5 rounded-2xl max-w-xl text-sm shadow-sm leading-relaxed">
+      <div class="chat-bubble-user px-4 py-2.5 rounded-2xl max-w-xl text-xs sm:text-sm leading-relaxed">
         ${escapeHtml(text)}
       </div>
-      <div class="w-8 h-8 rounded-full bg-slate-700 text-white flex items-center justify-center font-bold text-xs shrink-0 mt-1">
-        ${currentLang === "en" ? "You" : "你"}
+      <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-700 text-white flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+        ${msgLang === "en" ? "You" : "你"}
       </div>
     `;
     messagesContainer.appendChild(div);
   }
 
   function appendBotMessage(result) {
+    const replyLang = result.lang || currentLang;
+    const isEn = replyLang === "en";
+    const dict = I18N[replyLang] || I18N.zh;
     const div = document.createElement("div");
-    div.className = "flex items-start space-x-3";
+    div.className = "flex items-start space-x-2.5 msg-animate";
     const formattedContent = formatMarkdown(result.content);
-    const dict = I18N[currentLang] || I18N.zh;
+    const formattedSource = linkifyText(escapeHtml(result.source || ""));
 
     div.innerHTML = `
-      <div class="w-8 h-8 rounded-full bg-lnBlue text-white flex items-center justify-center font-bold text-xs shrink-0 mt-1">
+      <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-lnBlue text-lnGold flex items-center justify-center font-extrabold text-xs shrink-0 mt-0.5 shadow-xs">
         AI
       </div>
-      <div class="chat-bubble-bot p-4 rounded-2xl max-w-2xl text-sm leading-relaxed shadow-sm">
-        <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-slate-100 text-[11px] text-slate-400">
-          <span class="flex items-center gap-1 text-emerald-700 font-medium">
-            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            ${result.model}
-          </span>
-          <span class="text-slate-400">${currentLang === "en" ? "Official Lingnan RAG Grounding" : "官方 RAG 校園檢索"}</span>
+      <div class="chat-bubble-bot p-3.5 sm:p-4 rounded-2xl max-w-2xl w-full text-xs sm:text-sm leading-relaxed">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-2 pb-1.5 border-b border-slate-100 text-[11px]">
+          <div class="flex items-center gap-1.5">
+            <span class="flex items-center gap-1 text-emerald-700 font-semibold">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              ${escapeHtml(result.model)}
+            </span>
+            <span class="px-1.5 py-0.2 rounded bg-slate-100 text-slate-600 font-medium text-[10px]">
+              ${isEn ? "EN Reply" : "繁中回答"}
+            </span>
+          </div>
+          <button type="button" class="copy-reply-btn text-slate-400 hover:text-lnBlue inline-flex items-center gap-1 text-[11px] transition cursor-pointer" title="${isEn ? 'Copy answer' : '複製回答'}">
+            <i data-lucide="copy" class="w-3 h-3"></i>
+            <span class="copy-label">${isEn ? "Copy" : "複製"}</span>
+          </button>
         </div>
 
         <!-- Real Response Body -->
-        <div class="text-slate-800 space-y-2 leading-relaxed text-xs sm:text-sm">
+        <div class="bot-prose text-slate-800 space-y-1.5 leading-relaxed text-xs sm:text-sm">
           ${formattedContent}
         </div>
 
         <!-- Sourced Tag -->
-        <div class="source-box p-2 rounded-lg mt-3 text-[11px] text-slate-600 flex items-center gap-1.5">
-          <i data-lucide="bookmark-check" class="w-3.5 h-3.5 text-lnGold shrink-0"></i>
-          <span><b>${dict.verification_label}</b>${result.source}</span>
+        <div class="source-box p-2.5 rounded-xl mt-3 text-[11px] text-slate-600 flex items-start gap-1.5">
+          <i data-lucide="bookmark-check" class="w-3.5 h-3.5 text-lnGold shrink-0 mt-0.5"></i>
+          <div class="min-w-0 break-words"><b>${dict.verification_label}</b>${formattedSource}</div>
         </div>
       </div>
     `;
+
+    const copyBtn = div.querySelector(".copy-reply-btn");
+    if (copyBtn) {
+      copyBtn.addEventListener("click", () => {
+        navigator.clipboard?.writeText(result.content || "");
+        const label = copyBtn.querySelector(".copy-label");
+        if (label) {
+          label.textContent = isEn ? "Copied ✓" : "已複製 ✓";
+          setTimeout(() => {
+            label.textContent = isEn ? "Copy" : "複製";
+          }, 1800);
+        }
+      });
+    }
+
     messagesContainer.appendChild(div);
   }
 
-  function appendTypingIndicator() {
+  function appendTypingIndicator(msgLang) {
     const id = "typing-" + Date.now();
     const div = document.createElement("div");
     div.id = id;
-    div.className = "flex items-start space-x-3";
-    const dict = I18N[currentLang] || I18N.zh;
+    div.className = "flex items-start space-x-2.5 msg-animate";
+    const dict = I18N[msgLang] || I18N.zh;
 
     div.innerHTML = `
-      <div class="w-8 h-8 rounded-full bg-lnBlue text-white flex items-center justify-center font-bold text-xs shrink-0 mt-1">
+      <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-lnBlue text-lnGold flex items-center justify-center font-extrabold text-xs shrink-0 mt-0.5">
         AI
       </div>
-      <div class="chat-bubble-bot px-4 py-3 rounded-2xl max-w-xs text-xs text-slate-500 flex items-center space-x-2">
-        <span class="animate-pulse">●</span>
-        <span class="animate-pulse delay-100">●</span>
-        <span class="animate-pulse delay-200">●</span>
-        <span class="ml-2 font-mono text-[11px] text-emerald-700">${dict.typing_text}</span>
+      <div class="chat-bubble-bot px-4 py-3 rounded-2xl max-w-sm text-xs text-slate-500 flex items-center space-x-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-lnGold animate-bounce"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-lnGold animate-bounce" style="animation-delay: 150ms"></span>
+        <span class="w-1.5 h-1.5 rounded-full bg-lnGold animate-bounce" style="animation-delay: 300ms"></span>
+        <span class="ml-1.5 font-medium text-[11px] text-slate-600">${dict.typing_text}</span>
       </div>
     `;
     messagesContainer.appendChild(div);
@@ -543,15 +636,37 @@ function initChatLogic() {
     if (el) el.remove();
   }
 
+  function linkifyText(escapedText) {
+    return escapedText.replace(
+      /(https?:\/\/[^\s<)"']+)/g,
+      '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>'
+    );
+  }
+
   function formatMarkdown(text) {
     if (!text) return "";
-    return text
-      .split("\n\n")
-      .map(p => {
-        let formatted = escapeHtml(p)
-          .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
-          .replace(/\*(.*?)\*/g, '<i>$1</i>')
-          .replace(/\n/g, '<br>');
+    const paragraphs = text.split(/\n{2,}/);
+    return paragraphs
+      .map(block => {
+        const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
+        const isBulletBlock = lines.length > 0 && lines.every(l => /^[•\-*]\s*/.test(l));
+
+        if (isBulletBlock) {
+          const items = lines.map(l => {
+            const clean = l.replace(/^[•\-*]\s*/, "");
+            const styled = linkifyText(escapeHtml(clean))
+              .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+              .replace(/\*(.*?)\*/g, "<i>$1</i>");
+            return `<li>${styled}</li>`;
+          }).join("");
+          return `<ul>${items}</ul>`;
+        }
+
+        const formatted = lines.map(l => {
+          return linkifyText(escapeHtml(l))
+            .replace(/\*\*(.*?)\*\*/g, "<b>$1</b>")
+            .replace(/\*(.*?)\*/g, "<i>$1</i>");
+        }).join("<br>");
         return `<p>${formatted}</p>`;
       })
       .join("");
